@@ -21,9 +21,9 @@ function Over:enter(args)
     Run.cur = nil
     local g = W.group()
     self.g = g
-    g:add(W.button { x = 430, y = 610, w = 200, h = 56, label = "New Run", icon = "restart", primary = true,
+    g:add(W.button { x = 420, y = 610, w = 220, h = 56, label = "New Run", icon = "restart", primary = true,
         onClick = function() Run.new(); Audio.play("new_game"); App.go("blinds", "iris") end })
-    g:add(W.button { x = 650, y = 610, w = 200, h = 56, label = "Main Menu", icon = "back",
+    g:add(W.button { x = 660, y = 610, w = 220, h = 56, label = "Main Menu", icon = "back",
         onClick = function() App.go("menu") end })
     g.focus = 1
     g:playIntro(0.1)

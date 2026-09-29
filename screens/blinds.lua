@@ -94,15 +94,15 @@ local function blindCard(self, i, b)
     g.circle("fill", x + 60, CY + 152, 14)
     T.set(T.c.dark)
     g.circle("fill", x + 60, CY + 152, 8)
-    T.text(T.commas(b.target), x + 30, CY + 130, T.fs(40), T.c.text, "center", CARD_W - 30, "display")
+    T.text(T.commas(b.target), x + 15, CY + 130, T.fs(40), T.c.text, "center", CARD_W - 30, "display")
 
     T.text("REWARD", x, CY + 194, T.fs(12), T.c.dim, "center", CARD_W)
     T.text(string.rep("$", b.reward), x, CY + 210, T.fs(28), T.c.gold, "center", CARD_W, "display")
 
     if b.boss then
         T.set(T.c.bad, 0.16)
-        g.rectangle("fill", x + 16, CY + 252, CARD_W - 32, 56, 8, 8)
-        T.text(b.boss.desc, x + 28, CY + 262, T.fs(14), T.c.text, "center", CARD_W - 56)
+        g.rectangle("fill", x + 20, CY + 338, CARD_W - 42, 40, 8, 8)
+        T.text(b.boss.desc, x + 28, CY + 350, T.fs(13), T.c.text, "center", CARD_W - 56)
     end
 
     if state == "done" then
@@ -110,8 +110,6 @@ local function blindCard(self, i, b)
         g.setLineWidth(6)
         g.line(x + CARD_W / 2 - 22, CY + 330, x + CARD_W / 2 - 6, CY + 348, x + CARD_W / 2 + 26, CY + 312)
         T.text("CLEARED", x, CY + 356, T.fs(14), T.c.ok, "center", CARD_W)
-    elseif state == "later" then
-        T.text("UPCOMING", x, CY + 356, T.fs(14), T.c.dim, "center", CARD_W)
     end
     T.alpha = prev
     g.pop()

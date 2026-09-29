@@ -104,15 +104,15 @@ function Menu:draw()
 
     -- stats
     local d = Save.data
-    W.panel(90, 600, 380, 76)
-    T.spaced("BEST ANTE", 110, 614, T.fs(11), T.c.dim, 3)
-    T.text(tostring(d.bestAnte), 110, 630, T.fs(28), T.c.gold, "left", nil, "display")
-    T.spaced("BEST HAND", 210, 614, T.fs(11), T.c.dim, 3)
-    T.text(T.commas(d.bestHand), 210, 630, T.fs(28), T.c.text, "left", nil, "display")
-    T.spaced("RUNS / WINS", 350, 614, T.fs(11), T.c.dim, 3)
-    T.text(d.runs .. " / " .. d.wins, 350, 630, T.fs(28), T.c.text, "left", nil, "display")
+    W.panel(745, 510, 380, 76)
+    T.spaced("BEST ANTE", 765, 524, T.fs(11), T.c.dim, 3)
+    T.text(tostring(d.bestAnte), 795, 540, T.fs(28), T.c.gold, "left", nil, "display")
+    T.spaced("BEST HAND", 880, 524, T.fs(11), T.c.dim, 3)
+    T.text(T.commas(d.bestHand), 895, 540, T.fs(28), T.c.text, "left", nil, "display")
+    T.spaced("RUNS / WINS", 1005, 524, T.fs(11), T.c.dim, 3)
+    T.text(d.runs .. " / " .. d.wins, 1020, 540, T.fs(28), T.c.text, "left", nil, "display")
 
-    local fx = 700
+    local fx = 160
     fx = fx + T.keycap("up", fx, 684, 24) + 4
     fx = fx + T.keycap("down", fx, 684, 24) + 6
     T.text("Navigate", fx, 687, T.fs(13), T.c.dim)

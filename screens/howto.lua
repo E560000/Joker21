@@ -27,7 +27,7 @@ function Howto:enter()
     self.t = 0
     local g = W.group()
     self.g = g
-    g:add(W.button { x = 60, y = 640, w = 200, h = 54, label = "Back", icon = "back",
+    g:add(W.button { x = 60, y = 650, w = 200, h = 54, label = "Back", icon = "back",
         onClick = function() App.go("menu") end })
     g.focus = 1
 end
@@ -52,9 +52,9 @@ function Howto:draw()
     for i, r in ipairs(RULES) do
         local col = (i - 1) % 2
         local row = math.floor((i - 1) / 2)
-        local x, y, w, h = 60 + col * 400, 100 + row * 178, 380, 166
+        local x, y, w, h = 60 + col * 400, 100 + row * 183, 380, 173
         W.panel(x, y, w, h, r[1])
-        T.text(r[2], x + 20, y + 46, T.fs(15), T.c.text, "left", w - 40)
+        T.text(r[2], x + 20, y + 46, T.fs(17), T.c.text, "left", w - 40)
     end
 
     -- worked example

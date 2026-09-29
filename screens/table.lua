@@ -609,7 +609,6 @@ function Table:drawCashout()
         g.rectangle("fill", x + 28, y + 352, w - 56, 2)
         T.text("Total", x + 28, y + 366, T.fs(22), T.c.text, "left", nil, "display")
         T.text("$" .. self.cashTotal, x + 28, y + 362, T.fs(30), T.c.gold, "right", w - 56, "display")
-        T.text("You now have $" .. self.run.money, x, y + 408, T.fs(14), T.c.dim, "center", w)
     end
     self.cashG:draw()
 end

@@ -1,6 +1,6 @@
 function love.conf(t)
     t.identity = "joker21"
-    t.window.title = "JOKER 21 - Roguelike Blackjack"
+    t.window.title = "JOKER 21"
     t.window.width = 1280
     t.window.height = 720
     t.window.resizable = true
