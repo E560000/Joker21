@@ -4,7 +4,7 @@ local B = {}
 
 B.ANTES = 8
 -- Small-blind target per ante. Big = x1.5, Boss = x2 (before boss modifiers).
-B.BASE = { 100, 150, 270, 420, 900, 1800, 3400, 6000 }
+B.BASE = { 100, 250, 600, 1500, 4000, 10000, 22000, 50000 }
 
 B.BOSSES = {
     { key = "sharp",  name = "The Sharp",  desc = "Dealer stands on 18 instead of 17", standAt = 18 },
