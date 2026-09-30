@@ -209,6 +209,9 @@ function Table:beginScoring()
     if r.result == "win" then Audio.play("win")
     elseif r.result == "lose" or r.result == "bust" then Audio.play("loss") end
     self.banner = { text = txt, color = cols[r.result], t = 0 }
+    if r.result == "lose" and r.lossBonus and r.lossBonus > 0 then
+        self.banner.sub = "Pity: +" .. T.commas(r.lossBonus) .. " chips"
+    end
     if r.insured then self.banner.sub = "Insured - hand refunded"
     elseif r.result == "push" then self.banner.sub = "Hand refunded" end
     if r.result == "win" then
@@ -472,7 +475,7 @@ function Table:drawHandLabels()
 
     T.spaced("YOU", 320, PLAYER_Y - 56, T.fs(12), T.c.dim, 3)
     if #r.player > 0 then
-        local t, soft = Cards.total(r.player)
+        local t, soft = Score.handTotal(r)
         local col = (t > 21) and T.c.bad or ((t == 21) and T.c.gold or T.c.text)
         T.text(tostring(t), 320, PLAYER_Y - 38, T.fs(30), col, "left", nil, "display")
         if soft and t <= 21 then T.text("soft", 320, PLAYER_Y - 2, T.fs(12), T.c.dim) end

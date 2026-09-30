@@ -15,7 +15,7 @@ Run.UPGRADES = {
 function Run.new()
     local r = setmetatable({}, Run)
     r.ante, r.blindIdx = 1, 1
-    r.money, r.hands, r.slots = 5, 4, 5
+    r.money, r.hands, r.slots = 500, 4, 5
     r.jokers = {}
     r.bought = { hand = 0, slot = 0 }
     r.bosses = {}
@@ -81,7 +81,7 @@ end
 
 -- ------------------------------------------------------------------ shop
 
-local WEIGHT = { 60, 30, 10 }
+local WEIGHT = { 60, 30, 10, 5 }
 
 function Run:owns(id)
     for _, j in ipairs(self.jokers) do

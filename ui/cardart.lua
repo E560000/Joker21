@@ -112,14 +112,14 @@ end
 
 -- ------------------------------------------------------------- joker cards
 
-local RARITY_COL = { { 0.42, 0.62, 0.95 }, { 0.72, 0.45, 0.95 }, { 1.00, 0.70, 0.20 } }
+local RARITY_COL = { { 0.42, 0.62, 0.95 }, { 0.72, 0.45, 0.95 }, { 1.00, 0.70, 0.20 }, { 1.00, 0.35, 0.38 } }
 
 function C.rarityColor(r) return RARITY_COL[r] or RARITY_COL[1] end
 
 function C.joker(def, w, h, state)
     w, h = w or C.JW, h or C.JH
     local g = love.graphics
-    local col = RARITY_COL[def.rarity]
+    local col = C.rarityColor(def.rarity)
     shadow(w, h)
     T.set({ 0.11, 0.13, 0.19 })
     rr("fill", -w / 2, -h / 2, w, h, 10)
@@ -179,10 +179,10 @@ function C.tooltip(inst, x, y, extra)
     T.set({ 0.03, 0.05, 0.07 }, 0.97)
     rr("fill", x, y, w, h, 10)
     g.setLineWidth(2)
-    T.set(RARITY_COL[d.rarity])
+    T.set(C.rarityColor(d.rarity))
     rr("line", x, y, w, h, 10)
     T.textBox(d.name, x + 14, y + 8, w - 28, 25, T.fs(20), T.c.text, "left", "display")
-    T.textBox(J.rarityName[d.rarity], x + 14, y + 34, w - 28, 18, T.fs(12), RARITY_COL[d.rarity], "left")
+    T.textBox(J.rarityName[d.rarity], x + 14, y + 34, w - 28, 18, T.fs(12), C.rarityColor(d.rarity), "left")
     T.text(text, x + 14, y + 58, T.fs(15), T.c.text, "left", w - 28)
     if extra then
         T.textBox(extra, x + 14, y + h - 32, w - 28, 24, T.fs(14), T.c.gold, "left")

@@ -9,10 +9,27 @@ local S = {}
 S.BASE_CHIPS = 10
 S.BASE_MULT = 1
 
+function S.handTotal(round, hand)
+    hand = hand or round.player
+    local total = Cards.total(hand)
+    if total > 21 then return total end
+    for _, j in ipairs(round.run.jokers) do
+        if j.def.special21 then
+            local hasNine, hasTen = false, false
+            for _, card in ipairs(hand) do
+                if card.rank == "9" then hasNine = true end
+                if card.rank =="10" or card.rank == "j" or card.rank == "q" or card.rank == "k" then hasTen = true end
+            end
+            if hasNine and hasTen then return 21 end
+        end
+    end
+    return total
+end
+
 function S.compute(round)
     local run = round.run
     local hand = round.player
-    local total = Cards.total(hand)
+    local total = S.handTotal(round, hand)
     local ctx = {
         hand = hand, dealer = round.dealer, total = total,
         natural = Cards.isNatural(hand),

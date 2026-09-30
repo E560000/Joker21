@@ -71,7 +71,7 @@ end
 function Round:hit()
     if self.phase ~= "player" then return false end
     self.player[#self.player + 1] = self:draw()
-    local t = Cards.total(self.player)
+    local t = Score.handTotal(self)
     if t > 21 then self:resolve()
     elseif t == 21 then self:stand() end
     return true
@@ -92,7 +92,7 @@ function Round:double()
     if not self:canDouble() then return false end
     self.doubled = true
     self.player[#self.player + 1] = self:draw()
-    if Cards.total(self.player) > 21 then self:resolve() else self:stand() end
+    if Score.handTotal(self) > 21 then self:resolve() else self:stand() end
     return true
 end
 
@@ -109,7 +109,7 @@ function Round:dealerStep()
 end
 
 function Round:resolve()
-    local pt, dt = Cards.total(self.player), Cards.total(self.dealer)
+    local pt, dt = Score.handTotal(self), Cards.total(self.dealer)
     local pn, dn = Cards.isNatural(self.player), Cards.isNatural(self.dealer)
     local boss = self.blind.boss
     self.holeRevealed = true
@@ -117,7 +117,7 @@ function Round:resolve()
     if pt > 21 then res = "bust"
     elseif dt > 21 then res = "win"
     elseif pn and not dn then res = "win"
-    elseif dn and not pn then res = "lose"
+    elseif dn and not pn and pt ~= 21 then res = "lose"
     elseif pt > dt then res = "win"
     elseif pt < dt then res = "lose"
     else res = "push" end
@@ -138,20 +138,26 @@ function Round:resolve()
     end
 
     self.steps, self.finalScore = {}, 0
-    if res == "win" then
-        local r = Score.compute(self)
-        self.steps, self.finalScore = r.steps, r.score
-    end
+    local scoring = Score.compute(self)
+    self.potentialScore = scoring.score
+    if res == "win" then self.steps, self.finalScore = scoring.steps, scoring.score end
     self.phase = "scoring"
 end
 
 function Round:finishHand()
     local run = self.run
-    local ctx = { result = self.result, doubled = self.doubled }
+    local ctx = { result = self.result, doubled = self.doubled,
+        potentialScore = self.potentialScore or 0 }
     if self.result == "win" then
         self.score = self.score + self.finalScore
         run.stats.wins = run.stats.wins + 1
         run.stats.best = math.max(run.stats.best, self.finalScore)
+    end
+    if self.result == "lose" then
+        for _, j in ipairs(run.jokers) do
+            if j.def.onLoss then self.lossBonus = (self.lossBonus or 0) + j.def.onLoss(ctx, j) end
+        end
+        self.score = self.score + (self.lossBonus or 0)
     end
     run.stats.hands = run.stats.hands + 1
     for _, j in ipairs(run.jokers) do

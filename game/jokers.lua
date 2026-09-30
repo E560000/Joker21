@@ -16,13 +16,13 @@ local function isRed(card) return card.suit == "H" or card.suit == "D" end
 
 J.list = {
     { id = "jester", name = "Jester", rarity = 1, cost = 3, art = "J",
-      desc = "+4 Mult",
-      onHand = function() return { mult = 4 } end },
+      desc = "+2 Mult",
+      onHand = function() return { mult = 2 } end },
 
     { id = "lucky7", name = "Lucky Seven", rarity = 1, cost = 4, art = "7",
-      desc = "Each 7 scored: +5 Mult",
+      desc = "Each 7 scored: +4 Mult",
       onCard = function(ctx, card)
-          if card.rank == "7" then return { mult = 5 } end
+          if card.rank == "7" then return { mult = 4 } end
       end },
 
     { id = "facefan", name = "Face Fan", rarity = 1, cost = 4, art = "K",
@@ -54,9 +54,9 @@ J.list = {
       onHand = function() return { chips = 50 } end },
 
     { id = "standfirm", name = "Stand Firm", rarity = 1, cost = 5, art = "17",
-      desc = "Hand total 17-20: +6 Mult",
+      desc = "Hand total 17-20: +5 Mult",
       onHand = function(ctx)
-          if ctx.total >= 17 and ctx.total <= 20 then return { mult = 6 } end
+          if ctx.total >= 17 and ctx.total <= 20 then return { mult = 5 } end
       end },
 
     { id = "deepdraw", name = "Deep Draw", rarity = 1, cost = 5, art = "+",
@@ -103,8 +103,8 @@ J.list = {
       peek = true },
 
     { id = "ticket", name = "Golden Ticket", rarity = 2, cost = 5, art = "T",
-      desc = "Earn $3 when a blind is cleared",
-      onBlindEnd = function() return 3 end },
+      desc = "Earn $4 more when a blind is cleared",
+      onBlindEnd = function() return 4 end },
 
     { id = "gambler", name = "Gambler's Fallacy", rarity = 2, cost = 6, art = "?",
       desc = function(inst)
@@ -140,6 +140,12 @@ J.list = {
           if ctx.result == "win" then inst.state.bonus = (inst.state.bonus or 0) + 1 end
       end },
 
+    { id = "pity", name = "Pity", rarity = 2, cost = 6, art = "%",
+      desc = "On a loss, gain 10% of the chips you would have earned",
+      onLoss = function(ctx)
+          return math.floor((ctx.potentialScore or 0) * 0.1)
+      end },
+
     { id = "perfect", name = "Perfectionist", rarity = 3, cost = 8, art = "21",
       desc = "Hand total is exactly 21: X2 Mult",
       onHand = function(ctx)
@@ -166,6 +172,10 @@ J.list = {
           if ctx.result == "win" then inst.state.wins = (inst.state.wins or 0) + 1 end
       end },
 
+    { id = "youstupid", name = "You Stupid!", rarity = 4, cost = 12, art = "9+10",
+      desc = "A hand containing a 9 and a 10 value counts as 21",
+      special21 = true },
+
     { id = "roller", name = "High Roller", rarity = 3, cost = 9, art = "X",
       desc = "X1.5 Mult",
       onHand = function() return { xmult = 1.5 } end },
@@ -174,7 +184,7 @@ J.list = {
 J.byId = {}
 for _, d in ipairs(J.list) do J.byId[d.id] = d end
 
-J.rarityName = { "Common", "Uncommon", "Rare" }
+J.rarityName = { "Common", "Uncommon", "Rare", "Epic" }
 
 function J.new(id)
     return { id = id, def = J.byId[id], state = {} }
