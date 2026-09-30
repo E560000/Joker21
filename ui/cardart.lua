@@ -136,7 +136,7 @@ function C.joker(def, w, h, state)
         if def.suit == "S" then ink = { 0.75, 0.80, 0.95 } end
         C.suit(def.suit, 0, cy, w * 0.20, ink)
     else
-        local f = T.font("display", (#def.art > 1) and h * 0.26 or h * 0.32)
+        local f = T.font("display", (#def.art > 1) and h * 0.22 or h * 0.32)
         g.setFont(f)
         T.set(col)
         g.printf(def.art, -w / 2, cy - f:getHeight() / 2, w, "center")

@@ -1,8 +1,3 @@
--- ui/widgets.lua
--- Retained-mode widgets: button, toggle, slider, segment (segmented control).
--- A Group owns a list of widgets and handles mouse + keyboard focus, so every
--- screen is fully usable without a mouse (Up/Down/Tab, Left/Right, Enter).
-
 local T = require("ui.theme")
 local E = require("lib.easing")
 local Audio = require("game.audio")

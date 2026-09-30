@@ -1,5 +1,3 @@
--- game/run.lua  -  a full run: antes, blinds, money, jokers, shop
-
 local Blinds = require("game.blinds")
 local Jokers = require("game.jokers")
 

@@ -1,5 +1,3 @@
--- screens/blinds.lua  -  ante overview: pick or skip the current blind
-
 local T = require("ui.theme")
 local W = require("ui.widgets")
 local E = require("lib.easing")

@@ -1,8 +1,3 @@
--- game/score.lua  -  builds the ordered list of scoring steps for a won hand
---
--- Each step: { kind = "card"|"bonus"|"joker"|"double", label, cardIndex, joker,
---              chips, mult, xmult, cAfter, mAfter }
-
 local Cards = require("game.cards")
 
 local S = {}

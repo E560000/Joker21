@@ -1,5 +1,3 @@
--- screens/settings.lua  -  accessibility & display
-
 local T = require("ui.theme")
 local W = require("ui.widgets")
 local C = require("ui.cardart")

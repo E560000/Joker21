@@ -1,5 +1,3 @@
--- game/save.lua  -  tiny persistent stats (best ante etc). Fails silently.
-
 local Save = { data = { bestAnte = 0, bestHand = 0, wins = 0, runs = 0 } }
 local FILE = "stats.txt"
 

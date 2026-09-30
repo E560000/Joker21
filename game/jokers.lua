@@ -1,14 +1,3 @@
--- game/jokers.lua  -  joker definitions
---
--- Hooks (all optional):
---   onCard(ctx, card, inst)  -> {chips=, mult=, xmult=}   per scored card
---   onHand(ctx, inst)        -> {chips=, mult=, xmult=}   once per winning hand
---   onHandEnd(ctx, inst)     state bookkeeping after every hand
---   onBlindEnd(run, inst)    -> dollars earned when a blind is cleared
--- Flags: insurance (first bust each blind is free), peek (see hole card),
---        bossImmunity (ignore boss effects), deckPeek (view top deck card).
--- ctx = { hand, dealer, total, natural, dealerBust, doubled, result, nCards }
-
 local Cards = require("game.cards")
 
 local J = {}
@@ -51,13 +40,13 @@ J.list = {
       end },
 
     { id = "spender", name = "Big Spender", rarity = 1, cost = 4, art = "$",
-      desc = "+50 Chips",
-      onHand = function() return { chips = 50 } end },
+      desc = "+25 Chips",
+      onHand = function() return { chips = 25 } end },
 
     { id = "standfirm", name = "Stand Firm", rarity = 1, cost = 5, art = "17",
-      desc = "Hand total 17-20: +5 Mult",
+      desc = "Hand total 17-20: +3 Mult",
       onHand = function(ctx)
-          if ctx.total >= 17 and ctx.total <= 20 then return { mult = 5 } end
+          if ctx.total >= 17 and ctx.total <= 20 then return { mult = 3 } end
       end },
 
     { id = "deepdraw", name = "Deep Draw", rarity = 1, cost = 5, art = "+",
@@ -154,9 +143,9 @@ J.list = {
       end },
 
     { id = "pity", name = "Pity", rarity = 2, cost = 6, art = "%",
-      desc = "On a loss, gain 10% of the chips you would have earned",
+      desc = "On a loss, gain 20% of the chips you would have earned",
       onLoss = function(ctx)
-          return math.floor((ctx.potentialScore or 0) * 0.1)
+          return math.floor((ctx.potentialScore or 0) * 0.2)
       end },
 
     { id = "perfect", name = "Perfectionist", rarity = 3, cost = 8, art = "21",

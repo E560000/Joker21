@@ -1,10 +1,8 @@
--- game/blinds.lua  -  blind targets and boss effects
-
 local B = {}
 
 B.ANTES = 8
 -- Small-blind target per ante. Big = x1.5, Boss = x2 (before boss modifiers).
-B.BASE = { 100, 250, 600, 1500, 4000, 10000, 22000, 50000 }
+B.BASE = { 80, 140, 290, 600, 1700, 5000, 12000, 20000 }
 
 B.BOSSES = {
     { key = "sharp",  name = "The Sharp",  desc = "Dealer stands on 18 instead of 17", standAt = 18 },

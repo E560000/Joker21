@@ -1,5 +1,3 @@
--- screens/shop.lua  -  spend money between blinds
-
 local T = require("ui.theme")
 local W = require("ui.widgets")
 local E = require("lib.easing")

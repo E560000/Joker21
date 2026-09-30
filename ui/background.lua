@@ -1,7 +1,3 @@
--- ui/background.lua
--- Swirling felt (GLSL, compiled defensively) + drifting suit symbols.
--- Falls back to concentric felt rings if the shader is unavailable.
-
 local T = require("ui.theme")
 local C = require("ui.cardart")
 

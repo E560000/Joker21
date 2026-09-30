@@ -1,9 +1,3 @@
--- JOKER 21 - a Balatro-style roguelike blackjack game.
--- Built on the UI kit from the Sector2D overhaul (theme, widgets, easing,
--- virtual-resolution scaling, iris/fade transitions).
---
--- F11 fullscreen, F3 FPS counter.
-
 local T = require("ui.theme")
 local BG = require("ui.background")
 local App = require("app")

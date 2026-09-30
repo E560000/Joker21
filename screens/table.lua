@@ -1,7 +1,3 @@
--- screens/table.lua  -  the blackjack table (one blind)
---
--- Keys: H hit, S stand, D double, Space deal, Esc pause.
-
 local T = require("ui.theme")
 local W = require("ui.widgets")
 local E = require("lib.easing")
@@ -523,7 +519,7 @@ function Table:draw()
         local s = self.jsprites[j]
         Sprite.draw(s, function() C.joker(j.def) end, function() C.back() end)
     end
-    T.spaced("JOKERS " .. #run.jokers .. "/" .. run.slots, 1010, 60, T.fs(12), T.c.dim, 3)
+    T.spaced("JOKERS " .. #run.jokers .. "/" .. run.slots, 1010, 60, T.fs(11), T.c.dim, 3)
 
     -- felt table line
     g.setLineWidth(2)
@@ -544,7 +540,7 @@ function Table:draw()
     if self.deckPeekCard then
         W.panel(DECK_X - 108, DECK_Y - 132, 216, 112)
         T.text("TOP CARD", DECK_X - 92, DECK_Y - 118, T.fs(11), T.c.gold, "left", 184)
-        T.text(Cards.label(self.deckPeekCard), DECK_X - 92, DECK_Y - 88, T.fs(26), T.c.text, "center", 184, "display")
+        T.text(Cards.name(self.deckPeekCard), DECK_X - 92, DECK_Y - 88, T.fs(26), T.c.text, "center", 184, "display")
     end
 
     self:drawCards()

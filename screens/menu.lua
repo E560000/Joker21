@@ -1,5 +1,3 @@
--- screens/menu.lua
-
 local T = require("ui.theme")
 local W = require("ui.widgets")
 local C = require("ui.cardart")

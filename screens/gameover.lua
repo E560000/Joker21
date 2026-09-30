@@ -1,5 +1,3 @@
--- screens/gameover.lua  -  defeat / victory summary
-
 local T = require("ui.theme")
 local W = require("ui.widgets")
 local E = require("lib.easing")

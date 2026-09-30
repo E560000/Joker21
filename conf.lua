@@ -1,5 +1,6 @@
 function love.conf(t)
     t.identity = "joker21"
+    t.version = "11.5"
     t.window.title = "JOKER 21"
     t.window.width = 1280
     t.window.height = 720
