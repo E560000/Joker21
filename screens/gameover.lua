@@ -16,6 +16,7 @@ function Over:enter(args)
     self.run = Run.cur or Run.new()
     self.t = 0
     Save.record(self.run, self.victory)
+    Save.clearRun()
     Run.cur = nil
     local g = W.group()
     self.g = g

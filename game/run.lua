@@ -1,5 +1,6 @@
 local Blinds = require("game.blinds")
 local Jokers = require("game.jokers")
+local Save = require("game.save")
 
 local Run = {}
 Run.__index = Run
@@ -20,6 +21,43 @@ function Run.new()
     r.victory = false
     r.stats = { hands = 0, wins = 0, best = 0, blinds = 0 }
     r:rollBoss(1)
+    Run.cur = r
+    r:save()
+    return r
+end
+
+function Run:save(roundState)
+    local bosses = {}
+    for ante, boss in pairs(self.bosses) do bosses[ante] = boss.key end
+    local jokers = {}
+    for i, j in ipairs(self.jokers) do jokers[i] = { id = j.id, state = j.state } end
+    Save.writeRun({ ante = self.ante, blindIdx = self.blindIdx, money = self.money,
+        hands = self.hands, slots = self.slots, jokers = jokers, bought = self.bought,
+        bosses = bosses, victory = self.victory, stats = self.stats,
+        shop = self.shop, round = roundState })
+end
+
+function Run.restore(state)
+    if type(state) ~= "table" or not state.ante or not state.blindIdx then return nil end
+    local r = setmetatable({}, Run)
+    r.ante, r.blindIdx = state.ante, state.blindIdx
+    r.money, r.hands, r.slots = state.money or 0, state.hands or 4, state.slots or 5
+    r.jokers, r.bought, r.bosses = {}, state.bought or { hand = 0, slot = 0 }, {}
+    for _, saved in ipairs(state.jokers or {}) do
+        if Jokers.byId[saved.id] then
+            local j = Jokers.new(saved.id)
+            j.state = saved.state or {}
+            r.jokers[#r.jokers + 1] = j
+        end
+    end
+    for ante, key in pairs(state.bosses or {}) do
+        for _, boss in ipairs(Blinds.BOSSES) do
+            if boss.key == key then r.bosses[tonumber(ante) or ante] = boss break end
+        end
+    end
+    r.victory, r.stats, r.shop = state.victory or false,
+        state.stats or { hands = 0, wins = 0, best = 0, blinds = 0 }, state.shop
+    if not r.bosses[r.ante] then r:rollBoss(r.ante) end
     Run.cur = r
     return r
 end
@@ -49,6 +87,7 @@ function Run:advance()
             self:rollBoss(self.ante)
         end
     end
+    self:save()
 end
 
 function Run:skipBlind()
@@ -74,6 +113,7 @@ function Run:cashOut(round)
     for _, l in ipairs(lines) do total = total + l.amount end
     self.money = self.money + total
     self.stats.blinds = self.stats.blinds + 1
+    self:save()
     return lines, total
 end
 
@@ -116,6 +156,7 @@ end
 function Run:genShop()
     self.shop = { offers = {}, rerollCost = 2 }
     self:fillOffers()
+    self:save()
 end
 
 function Run:canBuyJoker(id)
@@ -129,6 +170,7 @@ function Run:buyJoker(index)
     self.money = self.money - Jokers.byId[id].cost
     self.jokers[#self.jokers + 1] = Jokers.new(id)
     table.remove(self.shop.offers, index)
+    self:save()
     return true
 end
 
@@ -137,6 +179,7 @@ function Run:sell(inst)
         if j == inst then
             self.money = self.money + Jokers.sellValue(inst)
             table.remove(self.jokers, i)
+            self:save()
             return true
         end
     end
@@ -154,6 +197,7 @@ function Run:buyUpgrade(id)
             self.bought[id] = self.bought[id] + 1
             if id == "hand" then self.hands = self.hands + 1 end
             if id == "slot" then self.slots = self.slots + 1 end
+            self:save()
             return true
         end
     end
@@ -165,6 +209,7 @@ function Run:reroll()
     self.money = self.money - self.shop.rerollCost
     self.shop.rerollCost = self.shop.rerollCost + 1
     self:fillOffers()
+    self:save()
     return true
 end
 

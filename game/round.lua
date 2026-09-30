@@ -28,6 +28,27 @@ function Round.new(run, blind)
     return self
 end
 
+function Round:saveState()
+    return { score = self.score, handsLeft = self.handsLeft, deck = self.deck,
+        discard = self.discard, player = self.player, dealer = self.dealer,
+        phase = self.phase, holeRevealed = self.holeRevealed, doubled = self.doubled,
+        insured = self.insured, result = self.result, cost = self.cost,
+        finalScore = self.finalScore, potentialScore = self.potentialScore,
+        lossBonus = self.lossBonus }
+end
+
+function Round.restore(run, blind, state)
+    local self = setmetatable({}, Round)
+    self.run, self.blind, self.target = run, blind, blind.target
+    for k, v in pairs(state) do self[k] = v end
+    self.steps = {}
+    if self.phase == "scoring" and self.result == "win" then
+        local scoring = Score.compute(self)
+        self.steps, self.finalScore = scoring.steps, scoring.score
+    end
+    return self
+end
+
 function Round:peekActive()
     for _, j in ipairs(self.run.jokers) do
         if j.def.peek then return true end

@@ -7,6 +7,7 @@ local Run = require("game.run")
 local Jokers = require("game.jokers")
 local App = require("app")
 local Audio = require("game.audio")
+local Save = require("game.save")
 
 local Menu = {}
 
@@ -19,6 +20,13 @@ local FAN = {
 }
 
 function Menu:enter()
+    if not Run.cur then
+        local saved = Save.loadRun()
+        if saved then
+            Run.restore(saved)
+            Run.cur.savedRound = saved.round
+        end
+    end
     self.t = 0
     self.sprites = {}
     for i, f in ipairs(FAN) do
@@ -41,7 +49,7 @@ function Menu:enter()
     local items = {}
     if hasRun then
         items[#items + 1] = { "Continue", "play", true, "Ante " .. Run.cur.ante .. " - $" .. Run.cur.money,
-            function() App.go("blinds", "iris") end }
+            function() App.go(Run.cur.savedRound and "table" or "blinds", "iris") end }
     end
     items[#items + 1] = { "New Run", "restart", not hasRun, "Beat 8 antes to win",
         function() Run.new(); Audio.play("new_game"); App.go("blinds", "iris") end }

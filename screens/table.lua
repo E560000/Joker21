@@ -34,7 +34,9 @@ function Table:enter()
     local run = Run.cur
     self.run = run
     self.blind = run:currentBlind()
-    self.round = Round.new(run, self.blind)
+    self.round = (run.savedRound and Round.restore(run, self.blind, run.savedRound)) or Round.new(run, self.blind)
+    local savedPhase = self.round.phase
+    self:saveProgress()
     self.sprites, self.order, self.jsprites, self.popups = {}, {}, {}, {}
     self.mode, self.timer, self.seq, self.t = "idle", 0, 0, 0
     self.shownScore = 0
@@ -45,14 +47,24 @@ function Table:enter()
     self.draggingJoker = nil
     self.scoreCallout, self.chainCount = nil, 0
     self.stepIdx, self.stepT, self.tallied = 0, 0, false
+    if savedPhase == "player" then self.mode = "player"
+    elseif savedPhase == "dealer" then self.mode, self.timer = "dealer", 0.1
+    elseif savedPhase == "scoring" then self.mode = "scoring"; self.stepT = 0.1 end
     for i, j in ipairs(run.jokers) do
         local x = JOKER_X0 + (i - 1) * JOKER_SP
         local s = Sprite.new(x, JOKER_Y - 90)
         s.tx, s.ty, s.wait = x, JOKER_Y, 0.05 * i
         self.jsprites[j] = s
     end
+    self:layout()
     self:buildGroups()
+    if savedPhase == "scoring" then self:beginScoring() end
     self:updateButtons()
+end
+
+function Table:saveProgress()
+    self.run.savedRound = self.round:saveState()
+    self.run:save(self.run.savedRound)
 end
 
 function Table:buildGroups()
@@ -107,6 +119,7 @@ function Table:doDeal()
     self.seq, self.banner = 0, nil
     self.dispChips, self.dispMult = 0, 0
     if not self.round:deal() then return end
+    self:saveProgress()
     self:layout()
     self.mode, self.timer = "dealing", 1.05 * math.max(speedF(), 0.35)
     self:updateButtons()
@@ -129,6 +142,7 @@ function Table:doHit()
     if self.mode ~= "player" then return end
     self.seq = 0
     self.round:hit()
+    self:saveProgress()
     self:layout()
     self.mode, self.timer = "dealing", 0.5 * math.max(speedF(), 0.3)
     self:updateButtons()
@@ -137,6 +151,7 @@ end
 function Table:doStand()
     if self.mode ~= "player" then return end
     self.round:stand()
+    self:saveProgress()
     self:layout()
     self.mode, self.timer = "dealing", 0.4 * math.max(speedF(), 0.3)
     self:updateButtons()
@@ -146,6 +161,7 @@ function Table:doDouble()
     if self.mode ~= "player" or not self.round:canDouble() then return end
     self.seq = 0
     self.round:double()
+    self:saveProgress()
     self:layout()
     self.mode, self.timer = "dealing", 0.6 * math.max(speedF(), 0.3)
     self:updateButtons()
@@ -277,6 +293,7 @@ end
 
 function Table:endHand()
     self.round:finishHand()
+    self:saveProgress()
     self.mode, self.timer, self.banner = "sweep", 0.5 * math.max(speedF(), 0.3), nil
     for _, s in pairs(self.sprites) do
         s.tx, s.tsc, s.trot = DECK_X + 260, 0.6, 0.6
@@ -654,6 +671,7 @@ function Table:mousepressed(x, y, b)
         and y >= DECK_Y - C.CH * 0.55 and y <= DECK_Y + C.CH * 0.55 then
         self.deckPeekCard = self.round:useDeckPeek()
         self.deckPeekTimer = 2.5
+        self:saveProgress()
         return
     end
     if b == 1 and not self.paused and self.mode ~= "cashout" and self.mode ~= "leaving"
@@ -687,6 +705,7 @@ function Table:mousereleased(x, y)
                 if to ~= from then
                     table.remove(self.run.jokers, from)
                     table.insert(self.run.jokers, to, joker)
+                    self:saveProgress()
                 end
             end
         end
