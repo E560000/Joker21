@@ -13,6 +13,9 @@ function Round.new(run, blind)
     self.run, self.blind, self.target = run, blind, blind.target
     self.score = 0
     self.handsLeft = run.hands
+    for _, j in ipairs(run.jokers) do
+        if j.def.extraHand then self.handsLeft = self.handsLeft + 1 end
+    end
     self.deck = Cards.shuffle(Cards.newDeck())
     self.discard = {}
     self.player, self.dealer = {}, {}
@@ -32,8 +35,34 @@ function Round:peekActive()
     return false
 end
 
+function Round:bossActive()
+    if not self.blind.boss then return false end
+    for _, j in ipairs(self.run.jokers) do
+        if j.def.bossImmunity then return false end
+    end
+    return true
+end
+
+function Round:deckPeekActive()
+    for _, j in ipairs(self.run.jokers) do
+        if j.def.deckPeek and not j.state.deckPeekUsed then return true end
+    end
+    return false
+end
+
+function Round:useDeckPeek()
+    if not self:deckPeekActive() then return nil end
+    for _, j in ipairs(self.run.jokers) do
+        if j.def.deckPeek and not j.state.deckPeekUsed then
+            j.state.deckPeekUsed = true
+            return self.deck[#self.deck]
+        end
+    end
+end
+
 function Round:standAt()
-    return (self.blind.boss and self.blind.boss.standAt) or 17
+    local boss = self:bossActive() and self.blind.boss
+    return (boss and boss.standAt) or 17
 end
 
 function Round:draw()
@@ -111,7 +140,7 @@ end
 function Round:resolve()
     local pt, dt = Score.handTotal(self), Cards.total(self.dealer)
     local pn, dn = Cards.isNatural(self.player), Cards.isNatural(self.dealer)
-    local boss = self.blind.boss
+    local boss = self:bossActive() and self.blind.boss
     self.holeRevealed = true
     local res
     if pt > 21 then res = "bust"

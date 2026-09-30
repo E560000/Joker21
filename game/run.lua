@@ -15,7 +15,7 @@ Run.UPGRADES = {
 function Run.new()
     local r = setmetatable({}, Run)
     r.ante, r.blindIdx = 1, 1
-    r.money, r.hands, r.slots = 500, 4, 5
+    r.money, r.hands, r.slots = 5, 4, 5
     r.jokers = {}
     r.bought = { hand = 0, slot = 0 }
     r.bosses = {}

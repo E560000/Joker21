@@ -5,7 +5,8 @@
 --   onHand(ctx, inst)        -> {chips=, mult=, xmult=}   once per winning hand
 --   onHandEnd(ctx, inst)     state bookkeeping after every hand
 --   onBlindEnd(run, inst)    -> dollars earned when a blind is cleared
--- Flags: insurance (first bust each blind is free), peek (see hole card).
+-- Flags: insurance (first bust each blind is free), peek (see hole card),
+--        bossImmunity (ignore boss effects), deckPeek (view top deck card).
 -- ctx = { hand, dealer, total, natural, dealerBust, doubled, result, nCards }
 
 local Cards = require("game.cards")
@@ -101,6 +102,18 @@ J.list = {
     { id = "counter", name = "Card Counter", rarity = 2, cost = 5, art = "#",
       desc = "See the dealer's hole card",
       peek = true },
+
+    { id = "vision", name = "20/20 Vision", rarity = 3, cost = 8, art = "20/20",
+      desc = "Click the deck once per blind to view its top card",
+      deckPeek = true },
+
+    { id = "selfemployed", name = "Self-Employed", rarity = 4, cost = 12, art = "SE",
+      desc = "Negates all boss blind effects",
+      bossImmunity = true },
+
+    { id = "prosthetic", name = "Prosthetic", rarity = 2, cost = 6, art = "P",
+      desc = "+1 hand per blind",
+      extraHand = true },
 
     { id = "ticket", name = "Golden Ticket", rarity = 2, cost = 5, art = "T",
       desc = "Earn $4 more when a blind is cleared",

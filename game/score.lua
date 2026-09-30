@@ -36,7 +36,7 @@ function S.compute(round)
         dealerBust = Cards.total(round.dealer) > 21,
         doubled = round.doubled, result = round.result, nCards = #hand,
     }
-    local boss = round.blind.boss
+    local boss = round:bossActive() and round.blind.boss
     local chips, mult = S.BASE_CHIPS, S.BASE_MULT
     local steps = {}
 

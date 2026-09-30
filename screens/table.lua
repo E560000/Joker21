@@ -45,6 +45,7 @@ function Table:enter()
     self.dispChips, self.dispMult = 0, 0
     self.chipsBump, self.multBump = 0, 0
     self.banner, self.paused = nil, false
+    self.deckPeekCard, self.deckPeekTimer = nil, 0
     self.draggingJoker = nil
     self.scoreCallout, self.chainCount = nil, 0
     self.stepIdx, self.stepT, self.tallied = 0, 0, false
@@ -320,6 +321,10 @@ end
 
 function Table:update(dt)
     self.t = self.t + dt
+    if self.deckPeekTimer > 0 then
+        self.deckPeekTimer = math.max(0, self.deckPeekTimer - dt)
+        if self.deckPeekTimer == 0 then self.deckPeekCard = nil end
+    end
     if self.paused then
         self.pauseG:update(dt, App.mx, App.my)
         return
@@ -536,6 +541,12 @@ function Table:draw()
     end
     T.text(#r.deck .. " left", DECK_X - 50, DECK_Y + 84, T.fs(13), T.c.dim, "center", 100)
 
+    if self.deckPeekCard then
+        W.panel(DECK_X - 108, DECK_Y - 132, 216, 112)
+        T.text("TOP CARD", DECK_X - 92, DECK_Y - 118, T.fs(11), T.c.gold, "left", 184)
+        T.text(Cards.label(self.deckPeekCard), DECK_X - 92, DECK_Y - 88, T.fs(26), T.c.text, "center", 184, "display")
+    end
+
     self:drawCards()
 
     if self.mode == "scoring" and self.scoreCallout then
@@ -641,6 +652,14 @@ function Table:keypressed(k, isrepeat)
 end
 
 function Table:mousepressed(x, y, b)
+    if b == 1 and not self.paused and self.mode ~= "cashout" and self.mode ~= "leaving"
+        and self.round:deckPeekActive()
+        and x >= DECK_X - C.CW * 0.55 and x <= DECK_X + C.CW * 0.55
+        and y >= DECK_Y - C.CH * 0.55 and y <= DECK_Y + C.CH * 0.55 then
+        self.deckPeekCard = self.round:useDeckPeek()
+        self.deckPeekTimer = 2.5
+        return
+    end
     if b == 1 and not self.paused and self.mode ~= "cashout" and self.mode ~= "leaving"
         and (self.mode == "idle" or self.mode == "player") then
         for _, j in ipairs(self.run.jokers) do
