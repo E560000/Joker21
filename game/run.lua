@@ -77,6 +77,7 @@ function Run:blindList()
 end
 
 function Run:advance()
+    self.savedRound = nil
     self.blindIdx = self.blindIdx + 1
     if self.blindIdx > 3 then
         self.blindIdx = 1
