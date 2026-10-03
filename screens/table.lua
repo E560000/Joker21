@@ -34,7 +34,15 @@ function Table:enter()
     local run = Run.cur
     self.run = run
     self.blind = run:currentBlind()
-    self.round = (run.savedRound and Round.restore(run, self.blind, run.savedRound)) or Round.new(run, self.blind)
+    local savedRound = run.savedRound
+    -- A blind ends in `won` or `lost`; neither phase can deal another hand.
+    -- Older release builds could carry the previous blind's won round into
+    -- the next blind, so discard terminal snapshots when resuming a run.
+    if savedRound and (savedRound.phase == "won" or savedRound.phase == "lost") then
+        savedRound = nil
+        run.savedRound = nil
+    end
+    self.round = (savedRound and Round.restore(run, self.blind, savedRound)) or Round.new(run, self.blind)
     local savedPhase = self.round.phase
     self:saveProgress()
     self.sprites, self.order, self.jsprites, self.popups = {}, {}, {}, {}
