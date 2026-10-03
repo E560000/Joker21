@@ -35,38 +35,10 @@ Built from scratch in Lua with the [LÖVE](https://love2d.org/) framework.
 -  **Animated transitions** (fade and iris wipe) and a custom animated background
 ##  Getting Started
  
-### Prerequisites
- 
-You'll need [LÖVE 11.5](https://love2d.org/) installed.
- 
-| Platform | Install |
-| --- | --- |
-| Windows | Download the installer from [love2d.org](https://love2d.org/) |
-| macOS | `brew install --cask love` or download from [love2d.org](https://love2d.org/) |
-| Linux | `sudo apt install love` (Debian/Ubuntu), or use your distro's package manager / Flatpak |
- 
-> The project targets LÖVE **11.5**. Other versions may work but are untested.
- 
 ### Run the game
  
-```bash
-# Clone the repository
-git clone https://github.com/E560000/Joker21.git
-cd Joker21
- 
-# Launch with LÖVE
-love .
-```
- 
-On Windows you can also drag the `Joker21` folder onto `love.exe`.
- 
-### Package as a `.love` file (optional)
- 
-```bash
-zip -9 -r Joker21.love . -x ".git/*"
-love Joker21.love
-```
- 
+Download the most recent release from this page, extract and run Joker21.exe.
+
 ##  How to Play
  
 Joker 21 follows the standard blackjack goal: get as close to **21** as you can without going over, and beat the dealer's hand.
