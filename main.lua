@@ -16,7 +16,7 @@ local function layout()
 end
 
 local function toVirtual(x, y)
-    return (x - ox) / scale, (y - oy) / scale
+    return (x - ox) / (scale * 2), (y - oy) / (scale * 2)
 end
 
 local function switchTo(name, args)
@@ -37,6 +37,9 @@ function App.go(name, kind, args)
 end
 
 function love.load()
+    -- The 2K virtual canvas is scaled to the window; use smooth texture and
+    -- font filtering so the enlarged UI does not look blocky.
+    love.graphics.setDefaultFilter("linear", "linear", 1)
     math.randomseed(os.time())
     love.keyboard.setKeyRepeat(true)
     T.refresh()
@@ -69,7 +72,7 @@ function love.update(dt)
             switchTo(trans.name, trans.args)
         end
         if trans.kind == "iris" then
-            local maxR = math.sqrt(T.W ^ 2 + T.H ^ 2) / 2
+            local maxR = math.sqrt(T.UI_W ^ 2 + T.UI_H ^ 2) / 2
             trans.radius = (t < 0.5) and maxR * (1 - t / 0.5) or maxR * ((t - 0.5) / 0.5)
         else
             trans.alpha = (t < 0.5) and (t / 0.5) or (1 - (t - 0.5) / 0.5)
@@ -85,26 +88,26 @@ function love.draw()
     g.setScissor(ox, oy, T.W * scale, T.H * scale)
     g.push()
     g.translate(ox, oy)
-    g.scale(scale, scale)
+    g.scale(scale * 2, scale * 2)
 
     BG.draw(current.tint)
     current:draw()
 
     if trans.active then
         if trans.kind == "iris" then
-            g.stencil(function() g.circle("fill", T.W / 2, T.H / 2, trans.radius) end, "replace", 1)
+            g.stencil(function() g.circle("fill", T.UI_W / 2, T.UI_H / 2, trans.radius) end, "replace", 1)
             g.setStencilTest("equal", 0)
             g.setColor(0.01, 0.05, 0.04, 1)
-            g.rectangle("fill", 0, 0, T.W, T.H)
+            g.rectangle("fill", 0, 0, T.UI_W, T.UI_H)
             g.setStencilTest()
         else
             g.setColor(0.01, 0.05, 0.04, trans.alpha)
-            g.rectangle("fill", 0, 0, T.W, T.H)
+            g.rectangle("fill", 0, 0, T.UI_W, T.UI_H)
         end
     end
 
     if T.opts.showFps then
-        T.text(love.timer.getFPS() .. " fps", T.W - 90, T.H - 24, 14, T.c.dim)
+        T.text(love.timer.getFPS() .. " fps", T.UI_W - 90, T.UI_H - 24, 14, T.c.dim)
     end
     g.pop()
     g.setScissor()

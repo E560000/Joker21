@@ -86,16 +86,16 @@ function Menu:draw()
     local pulse = T.opts.reducedMotion and 0 or (math.sin(self.t * 2) * 0.5 + 0.5)
 
     local big = T.font("title", 108)
-    g.setFont(big)
+    T.setFont(big)
     T.set({ 0, 0, 0 }, 0.35)
-    g.print("JOKER", 94, 104)
+    T.print("JOKER", 94, 104)
     T.set(T.c.text)
-    g.print("JOKER", 90, 98)
+    T.print("JOKER", 90, 98)
     local sw = big:getWidth("JOKER")
     T.set({ 0, 0, 0 }, 0.35)
-    g.print("21", 90 + sw + 20, 104)
+    T.print("21", 90 + sw + 20, 104)
     T.set(T.mix(T.c.accent, T.c.gold, pulse))
-    g.print("21", 86 + sw + 20, 98)
+    T.print("21", 86 + sw + 20, 98)
 
     -- card fan
     for i, s in ipairs(self.sprites) do

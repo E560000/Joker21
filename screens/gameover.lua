@@ -38,16 +38,16 @@ function Over:draw()
     local e = E.backOut(T.clamp(self.t / 0.6, 0, 1))
     if T.opts.reducedMotion then e = 1 end
     g.push()
-    g.translate(T.W / 2, 92)
+    g.translate(T.UI_W / 2, 92)
     g.scale(e, e)
-    love.graphics.setFont(T.font("display", 76))
+    T.setFont(T.font("display", 76))
     T.set({ 0, 0, 0 }, 0.5)
-    g.printf(self.victory and "VICTORY!" or "GAME OVER", -400 + 4, -40 + 5, 800, "center")
+    T.printf(self.victory and "VICTORY!" or "GAME OVER", -400 + 4, -40 + 5, 800, "center")
     T.set(self.victory and T.c.gold or T.c.bad)
-    g.printf(self.victory and "VICTORY!" or "GAME OVER", -400, -40, 800, "center")
+    T.printf(self.victory and "VICTORY!" or "GAME OVER", -400, -40, 800, "center")
     g.pop()
     T.text(self.victory and "You beat all 8 antes. The house is broke." or
-        "The dealer takes this one.", 0, 146, T.fs(18), T.c.dim, "center", T.W)
+        "The dealer takes this one.", 0, 146, T.fs(18), T.c.dim, "center", T.UI_W)
 
     W.panel(340, 190, 600, 250)
     local st = run.stats

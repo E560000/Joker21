@@ -4,7 +4,10 @@
 
 local T = {}
 
-T.W, T.H = 1280, 720
+-- The game renders into a 2K virtual canvas. UI layout values remain in the
+-- original 1280x720 design units and are scaled up by the main draw transform.
+T.W, T.H = 2560, 1440
+T.UI_W, T.UI_H = 1280, 720
 T.alpha = 1 -- global alpha multiplier (used by intros / fades)
 
 -- Use Neonderthaw for the game wordmark and Julius Sans One for all other
@@ -25,21 +28,6 @@ T.opts = {
     volume = 0.8,
     sfx = 0.8,
     palette = "classic", -- kept for the shared segment widget
-}
-
-T.palettes = {
-    classic = {
-        up    = { 0.76, 0.29, 0.60 },
-        right = { 0.00, 1.00, 1.00 },
-        down  = { 0.98, 0.22, 0.25 },
-        left  = { 0.07, 0.98, 0.02 },
-    },
-    cb = { -- colour-blind safe (Okabe-Ito derived)
-        up    = { 0.90, 0.62, 0.00 },
-        right = { 0.34, 0.71, 0.91 },
-        down  = { 0.84, 0.37, 0.00 },
-        left  = { 0.00, 0.62, 0.45 },
-    },
 }
 
 T.dirs = { "up", "right", "down", "left" }
@@ -131,12 +119,46 @@ function T.font(role, size)
         local f
         local path = T.fontFiles[role]
         if path and love.filesystem.getInfo(path) then
-            local ok, res = pcall(love.graphics.newFont, path, size)
+            local ok, res = pcall(love.graphics.newFont, path, size * 2)
             if ok then f = res end
         end
-        fontCache[key] = f or love.graphics.newFont(size)
+        f = f or love.graphics.newFont(size * 2)
+        f:setFilter("linear", "linear", 1)
+        fontCache[key] = {
+            native = f,
+            getWidth = function(_, str) return f:getWidth(str) / 2 end,
+            getHeight = function() return f:getHeight() / 2 end,
+            getWrap = function(_, str, width)
+                local wrappedWidth, lines = f:getWrap(str, width * 2)
+                return wrappedWidth / 2, lines
+            end,
+        }
     end
     return fontCache[key]
+end
+
+-- Fonts are rasterized at 2x, then drawn at half scale inside the 2x canvas
+-- transform. This preserves layout while keeping glyph edges crisp at 2K.
+function T.setFont(font)
+    love.graphics.setFont(font.native)
+end
+
+function T.print(str, x, y)
+    local g = love.graphics
+    g.push()
+    g.translate(x, y)
+    g.scale(0.5, 0.5)
+    g.print(str, 0, 0)
+    g.pop()
+end
+
+function T.printf(str, x, y, width, align)
+    local g = love.graphics
+    g.push()
+    g.translate(x, y)
+    g.scale(0.5, 0.5)
+    g.printf(str, 0, 0, width * 2, align)
+    g.pop()
 end
 
 -- Left/right/centre text. Pass w for printf-style alignment.
@@ -146,17 +168,17 @@ function T.text(str, x, y, size, color, align, w, role)
     -- Unbounded single-line labels still belong to the visible canvas. Scale
     -- them down to the remaining width instead of letting them clip offscreen.
     if not w and not str:find("\n", 1, true) then
-        local available = math.max(1, T.W - x)
+        local available = math.max(1, T.UI_W - x)
         while fontSize > 7 and T.font(role or "body", fontSize):getWidth(str) > available do
             fontSize = fontSize - 1
         end
     end
-    love.graphics.setFont(T.font(role or "body", fontSize))
+    T.setFont(T.font(role or "body", fontSize))
     T.set(color or T.c.text)
     if w then
-        love.graphics.printf(str, x, y, w, align or "left")
+        T.printf(str, x, y, w, align or "left")
     else
-        love.graphics.print(str, x, y)
+        T.print(str, x, y)
     end
 end
 
@@ -171,20 +193,20 @@ function T.textBox(str, x, y, w, h, size, color, align, role, alpha)
         f = T.font(role or "body", fontSize)
         _, lines = f:getWrap(str, math.max(1, w))
     end
-    love.graphics.setFont(f)
+    T.setFont(f)
     T.set(color or T.c.text, alpha)
     local textHeight = #lines * f:getHeight()
-    love.graphics.printf(str, x, y + math.max(0, (h - textHeight) / 2), w, align or "center")
+    T.printf(str, x, y + math.max(0, (h - textHeight) / 2), w, align or "center")
 end
 
 -- Letter-spaced small caps style text.
 function T.spaced(str, x, y, size, color, spacing, role)
     local f = T.font(role or "body", size)
-    love.graphics.setFont(f)
+    T.setFont(f)
     T.set(color or T.c.dim)
     local cx = x
     for ch in str:gmatch(".") do
-        love.graphics.print(ch, cx, y)
+        T.print(ch, cx, y)
         cx = cx + f:getWidth(ch) + spacing
     end
     return cx - x
@@ -231,9 +253,9 @@ function T.keycap(label, x, y, size)
     if isDir then
         T.glyph(label, x + w / 2, y + size / 2, size * 0.26, T.c.text)
     else
-        g.setFont(f)
+        T.setFont(f)
         T.set(T.c.text)
-        g.printf(label, x, y + (size - f:getHeight()) / 2, w, "center")
+        T.printf(label, x, y + (size - f:getHeight()) / 2, w, "center")
     end
     return w
 end

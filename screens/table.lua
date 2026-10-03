@@ -603,7 +603,7 @@ function Table:draw()
 
     if self.paused then
         T.set(T.c.dark, 0.78)
-        g.rectangle("fill", 0, 0, T.W, T.H)
+        g.rectangle("fill", 0, 0, T.UI_W, T.UI_H)
         W.panel(472, 170, 336, 270, "PAUSED")
         T.text("Take a breather", 504, 202, T.fs(28), T.c.text, "left", nil, "display")
         self.pauseG:draw()
@@ -616,7 +616,7 @@ end
 function Table:drawCashout()
     local g = love.graphics
     T.set(T.c.dark, 0.72)
-    g.rectangle("fill", 0, 0, T.W, T.H)
+    g.rectangle("fill", 0, 0, T.UI_W, T.UI_H)
     local x, y, w, h = 440, 96, 400, 496
     W.panel(x, y, w, h)
     T.text("BLIND CLEARED", x, y + 22, T.fs(34), T.c.gold, "center", w, "display")

@@ -26,8 +26,8 @@ vec4 effect(vec4 color, Image tex, vec2 uv, vec2 sc) {
 function BG.init()
     local suits = { "S", "H", "D", "C" }
     for i = 1, 16 do
-        local x = math.random() * T.W
-        BG.parts[i] = { x = x, baseX = x, y = math.random() * T.H,
+        local x = math.random() * T.UI_W
+        BG.parts[i] = { x = x, baseX = x, y = math.random() * T.UI_H,
             vy = 8 + math.random() * 12, r = 16 + math.random() * 26,
             suit = suits[math.random(1, 4)], a = 0.04 + math.random() * 0.05,
             spin = (math.random() - 0.5) * 0.5, rot = math.random() * 6.28,
@@ -47,7 +47,7 @@ function BG.update(dt)
         p.rot = p.rot + p.spin * dt
         p.x = p.baseX + math.sin(BG.t * 0.45 + p.phase) * 18
         if p.y < -40 then
-            p.y, p.baseX = T.H + 40, math.random() * T.W
+            p.y, p.baseX = T.UI_H + 40, math.random() * T.UI_W
         end
     end
 end
@@ -76,14 +76,14 @@ function BG.draw(tint)
         send(BG.shader, "c2", c2)
         send(BG.shader, "c3", c3)
         g.setColor(1, 1, 1, 1)
-        g.rectangle("fill", 0, 0, T.W, T.H)
+        g.rectangle("fill", 0, 0, T.UI_W, T.UI_H)
         g.setShader()
     else
         g.setColor(c1)
-        g.rectangle("fill", 0, 0, T.W, T.H)
+        g.rectangle("fill", 0, 0, T.UI_W, T.UI_H)
         for i = 6, 1, -1 do
             g.setColor(c2[1], c2[2], c2[3], 0.16)
-            g.circle("fill", T.W / 2, T.H / 2, 110 * i)
+            g.circle("fill", T.UI_W / 2, T.UI_H / 2, 110 * i)
         end
     end
     for _, p in ipairs(BG.parts) do
