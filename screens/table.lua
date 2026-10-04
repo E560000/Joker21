@@ -34,15 +34,7 @@ function Table:enter()
     local run = Run.cur
     self.run = run
     self.blind = run:currentBlind()
-    local savedRound = run.savedRound
-    -- A blind ends in `won` or `lost`; neither phase can deal another hand.
-    -- Older release builds could carry the previous blind's won round into
-    -- the next blind, so discard terminal snapshots when resuming a run.
-    if savedRound and (savedRound.phase == "won" or savedRound.phase == "lost") then
-        savedRound = nil
-        run.savedRound = nil
-    end
-    self.round = (savedRound and Round.restore(run, self.blind, savedRound)) or Round.new(run, self.blind)
+    self.round = Round.restore(run, self.blind, run.savedRound) or Round.new(run, self.blind)
     local savedPhase = self.round.phase
     self:saveProgress()
     self.sprites, self.order, self.jsprites, self.popups = {}, {}, {}, {}
@@ -67,12 +59,14 @@ function Table:enter()
     self:layout()
     self:buildGroups()
     if savedPhase == "scoring" then self:beginScoring() end
+    if savedPhase == "won" then self:afterSweep()
+    elseif savedPhase == "lost" then self.mode, self.timer = "sweep", 0 end
     self:updateButtons()
 end
 
 function Table:saveProgress()
-    self.run.savedRound = self.round:saveState()
-    self.run:save(self.run.savedRound)
+    self.run.screen = "table"
+    self.run:save(self.round:saveState())
 end
 
 function Table:buildGroups()
@@ -318,8 +312,10 @@ function Table:afterSweep()
         self.cashG.focus = 1
         self.cashG:playIntro(0.05)
     elseif p == "lost" then
-        self.mode = "leaving"
-        App.go("gameover", "fade", { victory = false })
+        -- A restored terminal round can finish while the incoming transition
+        -- is active. Retry next update instead of disabling all controls.
+        if App.go("gameover", "fade", { victory = false }) then self.mode = "leaving"
+        else self.mode, self.timer = "sweep", 0 end
     else
         self.mode = "idle"
     end
@@ -329,11 +325,10 @@ end
 function Table:finishCash()
     if self.mode ~= "cashout" then return end
     self.mode = "leaving"
-    self.run:advance()
+    self.run:finishBlind()
     if self.run.victory then
         App.go("gameover", "fade", { victory = true })
     else
-        self.run:genShop()
         App.go("shop", "iris")
     end
 end
@@ -401,6 +396,7 @@ function Table:update(dt)
         if self.timer <= 0 then
             self.seq = 0
             local drew = self.round:dealerStep()
+            self:saveProgress()
             self:layout()
             if drew then
                 self.timer = 0.7 * math.max(speedF(), 0.15)
@@ -447,7 +443,8 @@ function Table:drawSidebar()
     T.text(T.commas(b.target), 32, 86, T.fs(34), T.c.text, "left", nil, "display")
     T.text("Reward  " .. string.rep("$", b.reward), 32, 128, T.fs(16), T.c.gold)
     if b.boss then
-        T.text(b.boss.desc, 32, 152, T.fs(12), T.c.bad, "left", 244)
+        T.text(b.bossDisabled and "Boss effect negated" or b.boss.desc,
+            32, 152, T.fs(12), T.c.bad, "left", 244)
     end
 
     W.panel(16, 198, 276, 88)
@@ -496,7 +493,7 @@ function Table:drawHandLabels()
     local r = self.round
     T.spaced("DEALER", 320, DEALER_Y - 56, T.fs(12), T.c.dim, 3)
     T.text(dealerStr(self), 320, DEALER_Y - 38, T.fs(30), T.c.text, "left", nil, "display")
-    local st = self.blind.boss and self.blind.boss.standAt or 17
+    local st = r:standAt()
     T.text("stands on " .. st, 320, DEALER_Y - 2, T.fs(12), T.c.dim)
 
     T.spaced("YOU", 320, PLAYER_Y - 56, T.fs(12), T.c.dim, 3)

@@ -70,6 +70,11 @@ Bug reports, ideas, and pull requests are welcome.
 3. Commit your changes: `git commit -m "Add my idea"`
 4. Push the branch: `git push origin feature/my-idea`
 5. Open a pull request
+
+### Regression checks
+
+From the repository root, run `lua tests/regression.lua`. The checks use an
+in-memory filesystem and do not open a window or modify your game saves.
    
 ##  Acknowledgements
  

@@ -13,7 +13,7 @@ function S.handTotal(round, hand)
             local hasNine, hasTen = false, false
             for _, card in ipairs(hand) do
                 if card.rank == "9" then hasNine = true end
-                if card.rank =="10" or card.rank == "j" or card.rank == "q" or card.rank == "k" then hasTen = true end
+                if card.rank == "10" or Cards.isFace(card) then hasTen = true end
             end
             if hasNine and hasTen then return 21 end
         end

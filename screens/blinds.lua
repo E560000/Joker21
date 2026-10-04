@@ -100,7 +100,8 @@ local function blindCard(self, i, b)
     if b.boss then
         T.set(T.c.bad, 0.16)
         g.rectangle("fill", x + 20, CY + 338, CARD_W - 42, 40, 8, 8)
-        T.text(b.boss.desc, x + 28, CY + 350, T.fs(13), T.c.text, "center", CARD_W - 56)
+        T.text(b.bossDisabled and "Boss effect negated" or b.boss.desc,
+            x + 28, CY + 350, T.fs(13), T.c.text, "center", CARD_W - 56)
     end
 
     if state == "done" then

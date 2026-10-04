@@ -53,7 +53,7 @@ function Shop:enter()
             end
         end })
     self.nextBtn = g:add(W.button { x = 1020, y = 640, w = 220, h = 56, label = "Next Blind", icon = "next",
-        primary = true, onClick = function() App.go("blinds", "fade") end })
+        primary = true, onClick = function() run:leaveShop(); App.go("blinds", "fade") end })
     self:refresh()
     g.focus = #g.items
     g:playIntro(0.04)
