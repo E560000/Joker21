@@ -26,7 +26,7 @@ end
 
 -- kind: "fade" | "iris"
 function App.go(name, kind, args)
-    if trans.active then return end
+    if trans.active then return false end
     local reduced = T.opts.reducedMotion
     trans = {
         active = true, timer = 0, swapped = false,
@@ -34,6 +34,7 @@ function App.go(name, kind, args)
         kind = reduced and "fade" or (kind or "fade"),
         name = name, args = args,
     }
+    return true
 end
 
 function love.load()
