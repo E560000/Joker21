@@ -6,8 +6,8 @@ S.BASE_MULT = 1
 
 function S.handTotal(round, hand)
     hand = hand or round.player
-    local total = Cards.total(hand)
-    if total > 21 then return total end
+    local total, soft = Cards.total(hand)
+    if total > 21 then return total, soft end
     for _, j in ipairs(round.run.jokers) do
         if j.def.special21 then
             local hasNine, hasTen = false, false
@@ -15,10 +15,10 @@ function S.handTotal(round, hand)
                 if card.rank == "9" then hasNine = true end
                 if card.rank == "10" or Cards.isFace(card) then hasTen = true end
             end
-            if hasNine and hasTen then return 21 end
+            if hasNine and hasTen then return 21, soft end
         end
     end
-    return total
+    return total, soft
 end
 
 function S.compute(round)
