@@ -53,12 +53,12 @@ end
 
 function Audio.startMusic()
     if not music then return end
-    music:setVolume(T.opts.volume or 0.8)
+    music:setVolume((T.opts.masterVolume or 1) * (T.opts.volume or 0.8))
     if not music:isPlaying() then music:play() end
 end
 
 function Audio.update()
-    if music then music:setVolume(T.opts.volume or 0.8) end
+    if music then music:setVolume((T.opts.masterVolume or 1) * (T.opts.volume or 0.8)) end
 end
 
 function Audio.play(name, pitch)
@@ -67,9 +67,15 @@ function Audio.play(name, pitch)
     local voice = entry.voices[entry.next]
     entry.next = entry.next % #entry.voices + 1
     voice:stop()
-    voice:setVolume(T.opts.sfx or 0.8)
+    voice:setVolume((T.opts.masterVolume or 1) * (T.opts.sfx or 0.8))
     voice:setPitch(T.clamp(pitch or 1, 0.5, 2.0))
     voice:play()
+end
+
+function Audio.stop(name)
+    local entry = effects[name]
+    if not entry then return end
+    for _, voice in ipairs(entry.voices) do voice:stop() end
 end
 
 return Audio

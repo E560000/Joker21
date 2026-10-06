@@ -25,10 +25,47 @@ T.opts = {
     fourColor = false,   -- four-colour deck (distinct hue per suit)
     speed = 1,           -- scoring animation speed: 1 normal, 2 fast, 3 instant
     showFps = false,
+    masterVolume = 1,
     volume = 0.8,
     sfx = 0.8,
     palette = "classic", -- kept for the shared segment widget
 }
+
+local optionsFile = "options.lua"
+local optionKeys = { "highContrast", "reducedMotion", "largeText", "fourColor",
+    "speed", "showFps", "masterVolume", "volume", "sfx" }
+
+local function serializeOptions(value)
+    local fields = {}
+    for key, item in pairs(value) do
+        local encoded = type(item) == "string" and string.format("%q", item) or tostring(item)
+        fields[#fields + 1] = "[" .. string.format("%q", key) .. "]=" .. encoded
+    end
+    return "{" .. table.concat(fields, ",") .. "}"
+end
+
+function T.loadOptions()
+    if not (love.filesystem and love.filesystem.getInfo and love.filesystem.getInfo(optionsFile)) then return end
+    local ok, chunk = pcall(love.filesystem.load, optionsFile)
+    if not ok or not chunk then return end
+    if setfenv then setfenv(chunk, {}) end
+    local valid, saved = pcall(chunk)
+    if not valid or type(saved) ~= "table" then return end
+    for _, key in ipairs(optionKeys) do
+        if type(saved[key]) == type(T.opts[key]) then T.opts[key] = saved[key] end
+    end
+    for _, key in ipairs({ "masterVolume", "volume", "sfx" }) do
+        T.opts[key] = T.clamp(T.opts[key], 0, 1)
+    end
+end
+
+function T.saveOptions()
+    pcall(function()
+        local saved = {}
+        for _, key in ipairs(optionKeys) do saved[key] = T.opts[key] end
+        love.filesystem.write(optionsFile, "return " .. serializeOptions(saved))
+    end)
+end
 
 T.dirs = { "up", "right", "down", "left" }
 T.angle = { up = -math.pi / 2, right = 0, down = math.pi / 2, left = math.pi }
