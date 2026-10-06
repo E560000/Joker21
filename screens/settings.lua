@@ -30,6 +30,8 @@ function Settings:enter()
         onChange = function(v) o.showFps = v end })
     g:add(W.button { x = 60, y = 640, w = 200, h = 54, label = "Back", icon = "back",
         onClick = function() App.go("menu") end })
+    g:add(W.button { x = 300, y = 640, w = 200, h = 54, label = "Credits", icon = "flag",
+        onClick = function() App.go("credits") end})
     g:playIntro(0.04)
 end
 
