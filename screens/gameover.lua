@@ -21,9 +21,9 @@ function Over:enter(args)
     local g = W.group()
     self.g = g
     g:add(W.button { x = 420, y = 610, w = 220, h = 56, label = "New Run", icon = "restart", primary = true,
-        onClick = function() Run.new(); Audio.play("new_game"); App.go("blinds", "iris") end })
+        onClick = function() Audio.stop("game_loss"); Run.new(); Audio.play("new_game"); App.go("blinds", "iris") end })
     g:add(W.button { x = 660, y = 610, w = 220, h = 56, label = "Main Menu", icon = "back",
-        onClick = function() App.go("menu") end })
+        onClick = function() Audio.stop("game_loss"); App.go("menu") end })
     g.focus = 1
     g:playIntro(0.1)
 end
@@ -46,7 +46,7 @@ function Over:draw()
     T.set(self.victory and T.c.gold or T.c.bad)
     T.printf(self.victory and "VICTORY!" or "GAME OVER", -400, -40, 800, "center")
     g.pop()
-    T.text(self.victory and "You beat all 8 antes. The house is broke." or
+    T.text(self.victory and "You beat all 8 antes. The house is broke. DON'T COME BACK." or
         "The dealer takes this one.", 0, 146, T.fs(18), T.c.dim, "center", T.UI_W)
 
     W.panel(340, 190, 600, 250)
