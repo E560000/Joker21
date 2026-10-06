@@ -610,11 +610,11 @@ function Table:draw()
         T.set(T.c.dark, 0.78)
         g.rectangle("fill", 0, 0, T.UI_W, T.UI_H)
         W.panel(472, 170, 336, 270, "PAUSED")
-        T.text("Take a breather", 504, 202, T.fs(28), T.c.text, "left", nil, "display")
+        T.text("Take a breather", 520, 218, T.fs(28), T.c.text, "left", nil, "display")
         self.pauseG:draw()
-        local fx = 552
-        fx = fx + T.keycap("Esc", fx, 400, 24) + 6
-        T.text("Resume", fx, 403, T.fs(13), T.c.dim)
+        local fx = 582 
+        fx = fx + T.keycap("Esc", fx, 405, 24) + 6
+        T.text("Resume", fx, 409, T.fs(13), T.c.dim)
     end
 end
 

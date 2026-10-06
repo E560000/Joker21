@@ -6,23 +6,51 @@ local App = require("app")
 local Howto = {}
 
 local RULES = {
-    { "THE GOAL", "Each blind has a target score. Reach it before you run out of hands. " ..
+    GOAL = { "THE GOAL", "Each blind has a target score. Reach it before you run out of hands. " ..
         "Clear a Small, Big and Boss blind to finish an ante. Survive 8 antes to win." },
-    { "EACH HAND", "Play blackjack against the dealer (dealer stands on 17). Hit to draw, " ..
+    HAND = { "EACH HAND", "Play blackjack against the dealer (dealer stands on 17). Hit to draw, " ..
         "Stand to stop, or Double to draw exactly one card for double score. A dealer Blackjack " ..
         "automatically ends a hand you cannot win." },
-    { "SCORING", "Win a hand and it scores CHIPS x MULT. Chips = 10 + the chip value of each " ..
+    SCORING = { "SCORING", "Win a hand and it scores CHIPS x MULT. Chips = 10 + the chip value of each " ..
         "of your cards (Ace 11, faces 10). Mult starts at 1: +3 for a Blackjack, " ..
         "+1 for 21, +1 if the dealer busts." },
-    { "MISSES", "Lose or bust and the hand scores nothing but still uses a hand. " ..
+    MISSES = { "MISSES", "Lose or bust and the hand scores nothing but still uses a hand. " ..
         "A push scores nothing and gives the hand back. Doubling costs 2 hands." },
-    { "JOKERS", "Buy jokers in the shop to add chips, mult and X mult. Drag jokers across the " ..
+    JOKERS = { "JOKERS", "Buy jokers in the shop to add chips, mult and X mult. Drag jokers across the " ..
         "row to reorder their scoring effects. Sell any joker for half its price." },
-    { "BOSSES", "Every ante ends with a boss that bends a rule. Read it before you play." },
+    BOSSES = { "BOSSES", "Every ante ends with a boss that bends a rule. Read it before you play." },
 }
+
+-- Each tab is either a list of rule sections (stacked panels) or a custom draw function.
+local TABS = {
+    { name = "Basics",          sections = { RULES.GOAL, RULES.HAND } },
+    { name = "Scoring",         sections = { RULES.SCORING, RULES.MISSES } },
+    { name = "Jokers & Bosses", sections = { RULES.JOKERS, RULES.BOSSES } },
+    { name = "Example",         example = true },
+}
+
+-- Tab bar layout
+local TAB_X, TAB_Y, TAB_W, TAB_H, TAB_GAP = 60, 84, 220, 38, 8
+-- Content area
+local CX, CY, CW = 60, 134, 1160
+
+local function tabRect(i)
+    return TAB_X + (i - 1) * (TAB_W + TAB_GAP), TAB_Y, TAB_W, TAB_H
+end
+
+local function inRect(px, py, x, y, w, h)
+    return px >= x and px <= x + w and py >= y and py <= y + h
+end
+
+function Howto:setTab(i)
+    self.tab = ((i - 1) % #TABS) + 1
+    self.tabT = 0
+end
 
 function Howto:enter()
     self.t = 0
+    self.tab = 1
+    self.tabT = 0
     local g = W.group()
     self.g = g
     g:add(W.button { x = 60, y = 650, w = 200, h = 54, label = "Back", icon = "back",
@@ -32,6 +60,7 @@ end
 
 function Howto:update(dt)
     self.t = self.t + dt
+    self.tabT = self.tabT + dt
     self.g:update(dt, App.mx, App.my)
 end
 
@@ -43,20 +72,43 @@ local function miniCard(rank, suit, x, y)
     love.graphics.pop()
 end
 
-function Howto:draw()
-    T.text("How to Play", 60, 26, 44, T.c.text, "left", nil, "display")
+function Howto:drawTabs()
+    -- baseline under the whole tab bar
+    T.set(T.c.line)
+    love.graphics.rectangle("fill", CX, TAB_Y + TAB_H, CW, 2)
 
-    -- rules (two columns)
-    for i, r in ipairs(RULES) do
-        local col = (i - 1) % 2
-        local row = math.floor((i - 1) / 2)
-        local x, y, w, h = 60 + col * 400, 100 + row * 183, 380, 173
-        W.panel(x, y, w, h, r[1])
-        T.text(r[2], x + 20, y + 46, T.fs(17), T.c.text, "left", w - 40)
+    for i, tab in ipairs(TABS) do
+        local x, y, w, h = tabRect(i)
+        local active = (i == self.tab)
+        local hover = inRect(App.mx or -1, App.my or -1, x, y, w, h)
+
+        if active then
+            T.set(T.c.gold)
+            love.graphics.rectangle("fill", x, y + h - 3, w, 5)
+        elseif hover then
+            T.set(T.c.line)
+            love.graphics.rectangle("fill", x, y + h - 3, w, 4)
+        end
+
+        T.textBox(tab.name, x, y, w, h - 2, T.fs(18),
+            active and T.c.gold or (hover and T.c.text or T.c.dim), "center")
     end
+end
 
-    -- worked example
-    local px, py, pw, ph = 880, 100, 340, 522
+function Howto:drawSections(sections)
+    -- Stacked full-width panels, larger text since there's more room per tab
+    local gap = 20
+    local h = 230
+    for i, r in ipairs(sections) do
+        local y = CY + 10 + (i - 1) * (h + gap)
+        W.panel(CX, y, CW, h, r[1])
+        T.text(r[2], CX + 30, y + 56, T.fs(24), T.c.text, "left", CW - 60)
+    end
+end
+
+function Howto:drawExample()
+    local pw, ph = 340, 510
+    local px, py = CX + (CW - pw) / 2, CY - 4
     W.panel(px, py, pw, ph, "EXAMPLE")
     miniCard("K", "S", px + 62, py + 106)
     miniCard("7", "H", px + 128, py + 106)
@@ -85,18 +137,54 @@ function Howto:draw()
     W.panel(bx + 170, py + 382, 130, 60)
     T.textBox("2", bx + 170, py + 382, 130, 60, T.fs(34), T.c.mult, "center", "display")
     T.textBox("= 62 points", px, py + 456, pw, 40, T.fs(24), T.c.gold, "center", "display")
+end
+
+function Howto:draw()
+    T.text("How to Play", 60, 26, 44, T.c.text, "left", nil, "display")
+
+    self:drawTabs()
+
+    local tab = TABS[self.tab]
+    if tab.example then
+        self:drawExample()
+    else
+        self:drawSections(tab.sections)
+    end
 
     self.g:draw()
+
+    -- footer key hints
     local fx = 300
     fx = fx + T.keycap("Esc", fx, 655, 24) + 6
     T.text("Back", fx, 658, T.fs(13), T.c.dim)
+    fx = 420
+    fx = fx + T.keycap("Q", fx, 655, 24) + 4
+    fx = fx + T.keycap("E", fx, 655, 24) + 6
+    T.text("Switch tab", fx, 658, T.fs(13), T.c.dim)
 end
 
 function Howto:keypressed(k)
     if k == "escape" then App.go("menu") return end
+    if k == "left" or k == "q" then self:setTab(self.tab - 1) return end
+    if k == "right" or k == "e" then self:setTab(self.tab + 1) return end
+    local n = tonumber(k)
+    if n and TABS[n] then self:setTab(n) return end
     self.g:keypressed(k)
 end
-function Howto:mousepressed(x, y, b) self.g:mousepressed(x, y, b) end
+
+function Howto:mousepressed(x, y, b)
+    if b == 1 then
+        for i = 1, #TABS do
+            local tx, ty, tw, th = tabRect(i)
+            if inRect(x, y, tx, ty, tw, th) then
+                self:setTab(i)
+                return
+            end
+        end
+    end
+    self.g:mousepressed(x, y, b)
+end
+
 function Howto:mousereleased() self.g:mousereleased() end
 
 return Howto
