@@ -55,7 +55,7 @@ J.list = {
           if ctx.nCards > 2 then return { mult = 3 * (ctx.nCards - 2) } end
       end },
 
-    { id = "reds", name = "Red Baron", rarity = 1, cost = 4, art = "R", suit = "D",
+    { id = "reds", name = "Red Baron", rarity = 1, cost = 4, art = "[R]", 
       desc = "Each red card scored: +15 Chips",
       onCard = function(ctx, card)
           if isRed(card) then return { chips = 15 } end
@@ -84,11 +84,11 @@ J.list = {
           end
       end },
 
-    { id = "insurance", name = "Insurance Agent", rarity = 2, cost = 6, art = "i",
+    { id = "insurance", name = "Insurance Agent", rarity = 2, cost = 5, art = "i",
       desc = "First bust each blind doesn't use a hand",
       insurance = true },
 
-    { id = "counter", name = "Card Counter", rarity = 2, cost = 5, art = "#",
+    { id = "counter", name = "Card Counter", rarity = 3, cost = 7, art = "#",
       desc = "See the dealer's hole card",
       peek = true },
 
@@ -124,7 +124,7 @@ J.list = {
           end
       end },
 
-    { id = "interest", name = "Compound Interest", rarity = 2, cost = 7, art = "%",
+    { id = "interest", name = "Compound Interest", rarity = 2, cost = 5, art = "%",
       desc = "Earn $1 per $4 you hold at blind end (max $6)",
       onBlindEnd = function(run)
           return math.min(6, math.floor(run.money / 4))
@@ -142,7 +142,7 @@ J.list = {
           if ctx.result == "win" then inst.state.bonus = (inst.state.bonus or 0) + 1 end
       end },
 
-    { id = "pity", name = "Pity", rarity = 2, cost = 6, art = "%",
+    { id = "pity", name = "Pity", rarity = 3, cost = 8, art = "%",
       desc = "On a loss, gain 20% of the chips you would have earned",
       onLoss = function(ctx)
           return math.floor((ctx.potentialScore or 0) * 0.2)
