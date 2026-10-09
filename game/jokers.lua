@@ -55,12 +55,6 @@ J.list = {
           if ctx.nCards > 2 then return { mult = 3 * (ctx.nCards - 2) } end
       end },
 
-    { id = "reds", name = "Red Baron", rarity = 1, cost = 4, art = "[R]", 
-      desc = "Each red card scored: +15 Chips",
-      onCard = function(ctx, card)
-          if isRed(card) then return { chips = 15 } end
-      end },
-
     { id = "bane", name = "Dealer's Bane", rarity = 2, cost = 6, art = "!",
       desc = "Dealer busts: +8 Mult",
       onHand = function(ctx)
