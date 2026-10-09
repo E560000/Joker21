@@ -95,7 +95,8 @@ function Menu:draw()
     T.print("21", 90 + sw + 20, 104)
     T.set(T.mix(T.c.accent, T.c.gold, pulse))
     T.print("21", 86 + sw + 20, 98)
-
+    T.set(T.c.text)
+    T.spaced("STEM EDITION", 94, 254, T.fs(13), T.c.dim, 3)
     -- card fan
     for i, s in ipairs(self.sprites) do
         local f = FAN[i]
