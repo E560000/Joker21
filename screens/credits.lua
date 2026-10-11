@@ -1,7 +1,5 @@
 local T = require("ui.theme")
 local W = require("ui.widgets")
-local E = require("lib.easing")
-local C = require("ui.cardart")
 local App = require("app")
 
 local Credits = {}
@@ -15,19 +13,28 @@ end
 function Credits:update(dt) self.g:update(dt, App.mx, App.my) end
 
 function Credits:draw()
-  T.text("Credits", 60, 26, 44, T.c.text, "left", nil, "display")
-  T.text("Lead Development: E56", 62, 100, T.fs(20))
-  T.text("Assisted Dev:          MeerkatOne", 62, 120, T.fs(20))
-  T.text("Playtesters:", 62, 160, T.fs(20))
-  T.text("TheBigCheezo", 268, 160, T.fs(20))
-  T.text("Bigoodle", 268, 180, T.fs(20))
-  T.text("Endzio", 268, 200, T.fs(20))
-  T.text("Dellu", 268, 220, T.fs(20))
-  T.text("Seppuku", 268, 240, T.fs(20))
-  T.text("Tyler_WK", 268, 260, T.fs(20))
-  T.text("Special Thanks:", 62, 300, T.fs(20))
-  T.text("Thank YOU for playing!!", 62, 330, T.fs(20))
-  self.g:draw()
+    T.text("Credits", 60, 26, 44, T.c.text, "left", nil, "display")
+    W.panel(320, 100, 640, 520, "Internal ")
+
+    T.text("LEAD DEVELOPMENT", 356, 148, T.fs(14), T.c.dim)
+    T.text("E56", 356, 170, T.fs(20), T.c.text)
+    T.text("ASSISTED DEVELOPMENT", 356, 207, T.fs(14), T.c.dim)
+    T.text("MeerkatOne", 356, 229, T.fs(20), T.c.text)
+
+    T.text("PLAYTESTERS", 356, 266, T.fs(14), T.c.dim)
+    T.text("TheBigCheezo   ·   Bigoodle   ·   Endzio", 356, 288, T.fs(18), T.c.text)
+    T.text("Dellu   ·   Seppuku   ·   Tyler_WK   ·   .i_am_alex", 356, 314, T.fs(18), T.c.text)
+
+    T.text("ORIGINAL SOUNDTRACK", 356, 360, T.fs(14), T.c.dim)
+    T.text("TheBigCheezo", 356, 382, T.fs(20), T.c.text)
+
+    T.set(T.c.line, 0.8)
+    love.graphics.setLineWidth(1)
+    love.graphics.line(356, 426, 924, 426)
+    T.text("Special thanks to everyone who helped make this game.", 356, 448, T.fs(17), T.c.dim)
+    T.text("Thank you for playing!", 356, 492, T.fs(24), T.c.accent)
+
+    self.g:draw()
 end
 
 function Credits:keypressed(k)
