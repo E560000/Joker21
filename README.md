@@ -87,6 +87,6 @@ in-memory filesystem and do not open a window or modify your game saves.
 Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
  
 <div align="center">
-Made with ♠️ ♥️ ♣️ ♦️ by [E560000](https://github.com/E560000)
+Made with ♠️ ♥️ ♣️ ♦️ by E56
  
 </div>
