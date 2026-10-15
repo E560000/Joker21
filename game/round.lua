@@ -134,6 +134,9 @@ end
 
 function Round:standAt()
     local boss = self:bossActive() and self.blind.boss
+    if boss and boss.standOff then
+      return math.max(17, Cards.total(self.dealer) + 1, Score.handTotal(self))
+    end
     return (boss and boss.standAt) or 17
 end
 
@@ -202,7 +205,16 @@ end
 -- dealer is finished it resolves the hand and returns false.
 function Round:dealerStep()
     if self.phase ~= "dealer" then return false end
-    if Cards.total(self.dealer) < self:standAt() then
+    local dealerTotal = Cards.total(self.dealer)
+    local playerTotal = Score.handTotal(self)
+    local boss = self:bossActive() and self.blind.boss
+    local shouldStand
+    if boss and boss.standOff then
+        shouldStand = dealerTotal >= 17 or dealerTotal > playerTotal
+    else
+        shouldStand = dealerTotal >= self:standAt()
+    end
+    if not shouldStand then
         self.dealer[#self.dealer + 1] = self:draw()
         return true
     end

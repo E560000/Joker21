@@ -493,8 +493,12 @@ function Table:drawHandLabels()
     local r = self.round
     T.spaced("DEALER", 320, DEALER_Y - 56, T.fs(12), T.c.dim, 3)
     T.text(dealerStr(self), 320, DEALER_Y - 38, T.fs(30), T.c.text, "left", nil, "display")
-    local st = r:standAt()
-    T.text("stands on " .. st, 320, DEALER_Y - 2, T.fs(12), T.c.dim)
+    local boss = r:bossActive() and r.blind.boss
+    if boss and boss.standOff then
+      T.text("stands above you", 320, DEALER_Y - 2, T.fs(12), T.c.dim)
+    else
+      T.text("stands on " .. r:standAt(), 320, DEALER_Y - 2, T.fs(12), T.c.dim)
+    end
 
     T.spaced("YOU", 320, PLAYER_Y - 56, T.fs(12), T.c.dim, 3)
     if #r.player > 0 then
