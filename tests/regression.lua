@@ -413,6 +413,60 @@ test("valid saved phases progress at all three animation speeds", function()
     end
 end)
 
+test("a card revealed by 20/20 Vision is still drawn after a low-deck reshuffle", function()
+    local run = fresh("vision")
+    local round = Round.new(run, run:currentBlind())
+    while #round.deck > 5 do round.discard[#round.discard + 1] = table.remove(round.deck, 1) end
+    local top = round:useDeckPeek()
+    assert(round:deal())
+    eq(round.player[1], top)
+    eq(#round.deck + #round.player + #round.dealer, 52)
+end)
+
+test("You Stupid's 9 + 10 stands automatically on the deal", function()
+    local run = fresh("youstupid")
+    local round = Round.new(run, run:currentBlind())
+    round.deck, round.discard = Cards.newDeck(), {}
+    local sequence = {take(round, "9"), take(round, "8", "H"), take(round, "Q"), take(round, "9", "H")}
+    for k = #sequence, 1, -1 do round.deck[#round.deck + 1] = sequence[k] end
+    assert(round:deal())
+    eq(round.phase, "dealer")
+    while round:dealerStep() do end
+    eq(round.result, "win")
+end)
+
+test("settings persist and ignore malformed values", function()
+    local opts = { speed = 2, volume = 0.35, sfx = 0, reducedMotion = true, largeText = false }
+    Save.writeSettings(opts)
+    local loaded = { speed = 1, volume = 0.8, sfx = 0.8, reducedMotion = false, largeText = true }
+    Save.loadSettings(loaded)
+    eq(loaded.speed, 2)
+    eq(loaded.volume, 0.35)
+    eq(loaded.sfx, 0)
+    eq(loaded.reducedMotion, true)
+    eq(loaded.largeText, false)
+    files["settings.txt"] = "speed=7\nvolume=2\nsfx=abc\nlargeText=yes\nshowFps=true\nunknown=1"
+    Save.loadSettings(loaded)
+    eq(loaded.speed, 2)
+    eq(loaded.volume, 0.35)
+    eq(loaded.sfx, 0)
+    eq(loaded.largeText, false)
+    eq(loaded.showFps, true)
+end)
+
+test("the shop can be left for the menu and resumed with the same offers", function()
+    local run = fresh()
+    run.money = 0
+    run:genShop()
+    local offers = table.concat(run.shop.offers, ",")
+    Shop:enter()
+    Shop:keypressed("escape")
+    eq(route, "menu")
+    run = restart()
+    eq(route, "shop")
+    eq(table.concat(run.shop.offers, ","), offers)
+end)
+
 test("restored loss retries game over after an incoming real screen transition", function()
     -- LÖVE has already required its runner's main module when these checks
     -- are launched inside the engine, so load the game's entry point directly.

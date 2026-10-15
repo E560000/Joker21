@@ -7,6 +7,7 @@ local Cards = require("game.cards")
 local Round = require("game.round")
 local Score = require("game.score")
 local Run = require("game.run")
+local Blinds = require("game.blinds")
 local App = require("app")
 local Audio = require("game.audio")
 
@@ -470,7 +471,7 @@ function Table:drawSidebar()
 
     W.panel(16, 532, 276, 80)
     T.spaced("ANTE", 36, 544, T.fs(11), T.c.dim, 3)
-    T.text(run.ante .. " / " .. #require("game.blinds").BASE, 36, 562, T.fs(26), T.c.text, "left", nil, "display")
+    T.text(run.ante .. " / " .. Blinds.ANTES, 36, 562, T.fs(26), T.c.text, "left", nil, "display")
     T.spaced("DECK", 166, 544, T.fs(11), T.c.dim, 3)
     T.text(tostring(#r.deck), 166, 562, T.fs(26), T.c.text, "left", nil, "display")
 

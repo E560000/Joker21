@@ -1,3 +1,5 @@
+local Blinds = require("game.blinds")
+
 local Save = { data = { bestAnte = 0, bestHand = 0, wins = 0, runs = 0 } }
 local FILE = "stats.txt"
 local RUN_FILE = "run.lua"
@@ -64,11 +66,52 @@ function Save.write()
     end)
 end
 
+-- Settings are stored as key=value lines. Only known keys of the expected
+-- type are applied, so an old or hand-edited file cannot break the options.
+local SETTINGS_FILE = "settings.txt"
+local SETTINGS = {
+    highContrast = "boolean", reducedMotion = "boolean", largeText = "boolean",
+    fourColor = "boolean", showFps = "boolean",
+    speed = { 1, 3, 1 }, volume = { 0, 1 }, sfx = { 0, 1 },
+}
+
+function Save.loadSettings(opts)
+    pcall(function()
+        if not (love.filesystem and love.filesystem.getInfo and love.filesystem.getInfo(SETTINGS_FILE)) then return end
+        local text = love.filesystem.read(SETTINGS_FILE)
+        for k, v in tostring(text):gmatch("(%w+)=([%w%.]+)") do
+            local kind = SETTINGS[k]
+            if kind == "boolean" and (v == "true" or v == "false") then
+                opts[k] = (v == "true")
+            elseif type(kind) == "table" then
+                local n = tonumber(v)
+                if n and n == n and n >= kind[1] and n <= kind[2]
+                    and (not kind[3] or n == math.floor(n)) then
+                    opts[k] = n
+                end
+            end
+        end
+    end)
+end
+
+function Save.writeSettings(opts)
+    pcall(function()
+        if love.filesystem and love.filesystem.write then
+            local out = {}
+            for k in pairs(SETTINGS) do
+                if opts[k] ~= nil then out[#out + 1] = k .. "=" .. tostring(opts[k]) end
+            end
+            table.sort(out)
+            love.filesystem.write(SETTINGS_FILE, table.concat(out, "\n"))
+        end
+    end)
+end
+
 function Save.record(run, victory)
     local d = Save.data
     d.runs = d.runs + 1
     if victory then d.wins = d.wins + 1 end
-    d.bestAnte = math.max(d.bestAnte, math.min(run.ante, 8))
+    d.bestAnte = math.max(d.bestAnte, math.min(run.ante, Blinds.ANTES))
     d.bestHand = math.max(d.bestHand, run.stats.best)
     Save.write()
 end

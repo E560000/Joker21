@@ -4,6 +4,7 @@ local E = require("lib.easing")
 local C = require("ui.cardart")
 local Run = require("game.run")
 local Save = require("game.save")
+local Blinds = require("game.blinds")
 local App = require("app")
 local Audio = require("game.audio")
 
@@ -46,13 +47,13 @@ function Over:draw()
     T.set(self.victory and T.c.gold or T.c.bad)
     T.printf(self.victory and "VICTORY!" or "GAME OVER", -400, -40, 800, "center")
     g.pop()
-    T.text(self.victory and "You beat all 8 antes. The house is broke." or
+    T.text(self.victory and "You beat all " .. Blinds.ANTES .. " antes. The house is broke." or
         "The dealer takes this one.", 0, 146, T.fs(18), T.c.dim, "center", T.UI_W)
 
     W.panel(340, 190, 600, 250)
     local st = run.stats
     local rows = {
-        { "ANTE REACHED", tostring(math.min(run.ante, 8)) },
+        { "ANTE REACHED", tostring(math.min(run.ante, Blinds.ANTES)) },
         { "BLINDS CLEARED", tostring(st.blinds) },
         { "HANDS PLAYED", tostring(st.hands) },
         { "HANDS WON", tostring(st.wins) },

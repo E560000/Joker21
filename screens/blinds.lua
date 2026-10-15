@@ -117,7 +117,7 @@ end
 function Screen:draw()
     local run = self.run
     T.text("Ante " .. run.ante, 60, 26, 44, T.c.text, "left", nil, "display")
-    T.text("of " .. #require("game.blinds").BASE, 60 + T.font("display", 44):getWidth("Ante " .. run.ante) + 14,
+    T.text("of " .. Blinds.ANTES, 60 + T.font("display", 44):getWidth("Ante " .. run.ante) + 14,
         44, T.fs(20), T.c.dim)
     T.text("Choose your blind", 62, 88, T.fs(16), T.c.dim)
 

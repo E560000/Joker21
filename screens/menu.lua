@@ -5,6 +5,7 @@ local Sprite = require("ui.sprite")
 local Save = require("game.save")
 local Run = require("game.run")
 local Jokers = require("game.jokers")
+local Blinds = require("game.blinds")
 local App = require("app")
 local Audio = require("game.audio")
 
@@ -50,7 +51,7 @@ function Menu:enter()
                 App.go(screen, "iris", args)
             end }
     end
-    items[#items + 1] = { "New Run", "restart", not hasRun, "Beat 8 antes to win",
+    items[#items + 1] = { "New Run", "restart", not hasRun, "Beat " .. Blinds.ANTES .. " antes to win",
         function() Run.new(); Audio.play("new_game"); App.go("blinds", "iris") end }
     items[#items + 1] = { "How to Play", "flag", false, "Rules and scoring",
         function() App.go("howto") end }

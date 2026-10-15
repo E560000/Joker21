@@ -3,6 +3,7 @@ local W = require("ui.widgets")
 local E = require("lib.easing")
 local C = require("ui.cardart")
 local Jokers = require("game.jokers")
+local Blinds = require("game.blinds")
 local Run = require("game.run")
 local App = require("app")
 local Audio = require("game.audio")
@@ -52,6 +53,8 @@ function Shop:enter()
                 self:refresh()
             end
         end })
+    g:add(W.button { x = 40, y = 640, w = 200, h = 54, label = "Menu", icon = "back",
+        onClick = function() App.go("menu") end })
     self.nextBtn = g:add(W.button { x = 1020, y = 640, w = 220, h = 56, label = "Next Blind", icon = "next",
         primary = true, onClick = function() run:leaveShop(); App.go("blinds", "fade") end })
     self:refresh()
@@ -114,7 +117,7 @@ function Shop:draw()
     local g = love.graphics
     local run = self.run
     T.text("Shop", 60, 26, 44, T.c.text, "left", nil, "display")
-    T.text("Ante " .. run.ante .. " - next up: " .. require("game.blinds").NAMES[run.blindIdx],
+    T.text("Ante " .. run.ante .. " - next up: " .. Blinds.NAMES[run.blindIdx],
         62, 84, T.fs(16), T.c.dim)
 
     W.panel(1000, 22, 220, 74)
@@ -177,7 +180,7 @@ function Shop:draw()
 end
 
 function Shop:keypressed(k)
-    if k == "escape" then return end
+    if k == "escape" then App.go("menu") return end
     self.g:keypressed(k)
 end
 

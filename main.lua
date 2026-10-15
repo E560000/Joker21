@@ -43,6 +43,7 @@ function love.load()
     love.graphics.setDefaultFilter("linear", "linear", 1)
     math.randomseed(os.time())
     love.keyboard.setKeyRepeat(true)
+    Save.loadSettings(T.opts)
     T.refresh()
     Audio.load()
     Audio.startMusic()
@@ -120,6 +121,7 @@ function love.keypressed(key, scancode, isrepeat)
         return
     elseif key == "f3" then
         T.opts.showFps = not T.opts.showFps
+        Save.writeSettings(T.opts)
         return
     end
     if trans.active then return end

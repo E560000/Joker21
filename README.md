@@ -29,9 +29,9 @@ Built from scratch in Lua with the [LÖVE](https://love2d.org/) framework.
 -  **Blinds and rounds**: a run-based structure inspired by Balatro
 -  **Shop screen** between rounds
 -  **Save system** so your progress sticks around
--  **Music and sound effects**
+-  **Music and sound effects** with separate volume sliders
 -  **Resizable window** with a scaled virtual canvas, plus fullscreen support
--  **Reduced motion option** for gentler screen transitions
+-  **Accessibility settings** (reduced motion, high contrast, large text, four-colour deck) that are remembered between launches
 -  **Animated transitions** (fade and iris wipe) and a custom animated background
 ##  Getting Started
  

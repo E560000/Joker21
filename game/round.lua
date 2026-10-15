@@ -148,9 +148,11 @@ end
 function Round:deal()
     if self.phase ~= "idle" or self.handsLeft <= 0 then return false end
     if #self.deck < 14 then
-        for _, c in ipairs(self.discard) do self.deck[#self.deck + 1] = c end
-        self.discard = {}
-        Cards.shuffle(self.deck)
+        -- Shuffle the discards in underneath the remaining cards so a card
+        -- revealed by 20/20 Vision is still the next one drawn.
+        local refill = Cards.shuffle(self.discard)
+        for _, c in ipairs(self.deck) do refill[#refill + 1] = c end
+        self.deck, self.discard = refill, {}
     end
     self.player, self.dealer = {}, {}
     self.player[1] = self:draw()
@@ -164,7 +166,7 @@ function Round:deal()
     -- immediately so the player is never offered actions that cannot win.
     if Cards.isNatural(self.dealer) and not Cards.isNatural(self.player) then
         self:resolve()
-    elseif Cards.isNatural(self.player) then
+    elseif Score.handTotal(self) == 21 then
         self:stand()
     end
     return true

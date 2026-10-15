@@ -142,7 +142,7 @@ J.list = {
           if ctx.result == "win" then inst.state.bonus = (inst.state.bonus or 0) + 1 end
       end },
 
-    { id = "pity", name = "Pity", rarity = 2, cost = 6, art = "%",
+    { id = "pity", name = "Pity", rarity = 2, cost = 6, art = ":(",
       desc = "On a loss, gain 20% of the chips you would have earned",
       onLoss = function(ctx)
           return math.floor((ctx.potentialScore or 0) * 0.2)
