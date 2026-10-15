@@ -1,14 +1,14 @@
 local B = {}
 
 B.ANTES = 8
--- Small-blind target per ante. Big = x1.5, Boss = x2 (before boss modifiers).
+-- Big = x1.5, Boss = x2 (before boss modifiers).
 B.BASE = { 80, 140, 290, 600, 1700, 5000, 12000, 20000 }
 
 B.BOSSES = {
-    { key = "sharp",  name = "The Sharp",  desc = "Dealer stands on anything above you", standOff = true }--,
-    --{ key = "miser",  name = "The Miser",  desc = "Pushes count as losses",            pushLoses = true },
-    --{ key = "plague", name = "The Plague", desc = "Face cards score 0 chips",          noFaceChips = true },
-    --{ key = "wall",   name = "The Wall",   desc = "Target score is 50% larger",        tmult = 1.5 },
+    { key = "sharp",  name = "The Sharp",  desc = "Dealer stands on anything above you", standOff = true }--[[,
+    { key = "miser",  name = "The Miser",  desc = "Pushes count as losses",            pushLoses = true },
+    { key = "plague", name = "The Plague", desc = "Face cards score 0 chips",          noFaceChips = true },
+    { key = "wall",   name = "The Wall",   desc = "Target score is 50% larger",        tmult = 1.5 },--]]
 }
 
 B.NAMES = { "Small Blind", "Big Blind", "Boss Blind" }

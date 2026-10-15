@@ -163,8 +163,6 @@ function Round:deal()
     self.holeRevealed, self.doubled, self.insured, self.result = false, false, false, nil
     self.lossBonus = 0
     self.phase = "player"
-    -- A dealer natural beats every non-natural player hand. Resolve it
-    -- immediately so the player is never offered actions that cannot win.
     if Cards.isNatural(self.dealer) and not Cards.isNatural(self.player) then
         self:resolve()
     elseif Cards.isNatural(self.player) then
@@ -201,8 +199,6 @@ function Round:double()
     return true
 end
 
--- Draws one dealer card if needed. Returns true if a card was drawn; when the
--- dealer is finished it resolves the hand and returns false.
 function Round:dealerStep()
     if self.phase ~= "dealer" then return false end
     local dealerTotal = Cards.total(self.dealer)
