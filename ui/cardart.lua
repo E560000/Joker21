@@ -87,15 +87,15 @@ function C.back(w, h)
     w, h = w or C.CW, h or C.CH
     local g = love.graphics
     shadow(w, h)
-    T.set({ 0.85, 0.30, 0.20 })
+    T.set({ 0.35, 0.60, 0.20 })
     rr("fill", -w / 2, -h / 2, w, h, 10)
-    T.set({ 0.97, 0.95, 0.90 })
+    T.set({ 0.97, 0.85, 0.90 })
     g.setLineWidth(2)
     rr("line", -w / 2 + 6, -h / 2 + 6, w - 12, h - 12, 7)
     -- diamond lattice, clipped to the inner frame with the stencil buffer
     g.stencil(function() rr("fill", -w / 2 + 6, -h / 2 + 6, w - 12, h - 12, 7) end, "replace", 1)
     g.setStencilTest("greater", 0)
-    T.set({ 1, 0.85, 0.6 }, 0.35)
+    T.set({ 0.8, 0.8, 0.8 }, 0.35)
     g.setLineWidth(1.5)
     local s = 18
     for i = -6, 6 do
@@ -103,7 +103,7 @@ function C.back(w, h)
         g.line(i * s + 40, -h / 2, i * s - 40, h / 2)
     end
     g.setStencilTest()
-    T.set({ 0.85, 0.30, 0.20 })
+    T.set({ 0.85, 0.30, 0.80 })
     g.circle("fill", 0, 0, 16)
     T.set({ 0.97, 0.95, 0.90 })
     g.circle("line", 0, 0, 16)
