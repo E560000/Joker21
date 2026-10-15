@@ -587,7 +587,7 @@ function Table:draw()
         T.set({ 0, 0, 0 }, 0.6)
         T.textBox(b.text, -297, -30, 594, 70, 60, { 0, 0, 0 }, "center", "display", 0.6)
         T.textBox(b.text, -300, -34, 600, 70, 60, b.color, "center", "display")
-        if b.sub then T.text(b.sub, -100, 10, T.fs(16), T.c.text, "center", 600) end
+        if b.sub then T.text(b.sub, -100, 30, T.fs(16), T.c.text, "center", 600) end
         g.pop()
     end
 
@@ -679,7 +679,7 @@ function Table:mousepressed(x, y, b)
         and x >= DECK_X - C.CW * 0.55 and x <= DECK_X + C.CW * 0.55
         and y >= DECK_Y - C.CH * 0.55 and y <= DECK_Y + C.CH * 0.55 then
         self.deckPeekCard = self.round:useDeckPeek()
-        self.deckPeekTimer = 2.5
+        self.deckPeekTimer = 4
         self:saveProgress()
         return
     end
