@@ -27,12 +27,15 @@ function Credits:draw()
 
     T.text("ORIGINAL SOUNDTRACK", 356, 360, T.fs(14), T.c.dim)
     T.text("TheBigCheezo", 356, 382, T.fs(20), T.c.text)
+    
+    T.text("INSPIRATION", 356, 420, T.fs(14), T.c.dim)
+    T.text("LocalThunk - Balatro", 356, 440, T.fs(20), T.c.text)
 
     T.set(T.c.line, 0.8)
     love.graphics.setLineWidth(1)
-    love.graphics.line(356, 426, 924, 426)
-    T.text("Special thanks to everyone who helped make this game.", 356, 448, T.fs(17), T.c.dim)
-    T.text("Thank you for playing!", 356, 492, T.fs(24), T.c.accent)
+    love.graphics.line(356, 496, 924, 496)
+    T.text("Special thanks to everyone who helped make this game.", 356, 525, T.fs(17), T.c.dim)
+    T.text("Thank you for playing!", 356, 562, T.fs(24), T.c.accent)
 
     self.g:draw()
 end
